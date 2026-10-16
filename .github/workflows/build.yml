@@ -5,12 +5,7 @@ name: Build
 
 on:
   push:
-    branches: [main]
-    paths-ignore:
-      - "documents/**"
-      - "**/*.md"
-
-  pull_request:
+    branches: [main, dlss-nr]
     paths-ignore:
       - "documents/**"
       - "**/*.md"
@@ -25,54 +20,17 @@ env:
   BUILD_TYPE: Release
 
 jobs:
-  reuse:
-    runs-on: ubuntu-24.04
-    steps:
-    - uses: actions/checkout@v6
-    - uses: fsfe/reuse-action@v6
-
-  clang-format:
-    runs-on: ubuntu-24.04
-    steps:
-    - uses: actions/checkout@v6
-      with:
-        fetch-depth: 0
-    - name: Install
-      run: |
-        wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-        sudo add-apt-repository 'deb http://apt.llvm.org/noble/ llvm-toolchain-noble-19 main'
-        sudo apt update
-        sudo apt install clang-format-19
-    - name: Build
-      env:
-        COMMIT_RANGE: ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}
-      run: ./.github/workflows/scripts/clang-format.sh
-
-  get-info:
-    runs-on: ubuntu-24.04
-    outputs:
-      date: ${{ steps.vars.outputs.date }}
-      shorthash: ${{ steps.vars.outputs.shorthash }}
-      fullhash: ${{ steps.vars.outputs.fullhash }}
-    steps:
-    - uses: actions/checkout@v6
-    - name: Get date and git hash
-      id: vars
-      run: |
-        echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
-        echo "shorthash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-        echo "fullhash=$(git rev-parse HEAD)" >> $GITHUB_ENV
-        echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
-        echo "shorthash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-        echo "fullhash=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-
   windows-sdl:
     runs-on: windows-2025-vs2026
-    needs: get-info
     steps:
     - uses: actions/checkout@v6
       with:
         submodules: recursive
+
+    - name: Get git hash
+      id: vars
+      shell: bash
+      run: echo "shorthash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
     - name: Cache CMake Configuration
       uses: actions/cache@v5
@@ -93,9 +51,6 @@ jobs:
         append-timestamp: false
         key: ${{ env.cache-name }}-${{ hashFiles('**/CMakeLists.txt', 'cmake/**') }}
 
-    - name: Print CPU Info
-      run: bash -c "cat /proc/cpuinfo"
-
     - name: Configure CMake
       run: cmake --fresh -G Ninja -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE=ON -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 
@@ -105,5 +60,5 @@ jobs:
     - name: Upload Windows SDL artifact
       uses: actions/upload-artifact@v7
       with:
-        name: shadPS4-exe-only-win64-${{ needs.get-info.outputs.shorthash }}
+        name: shadPS4-exe-only-win64-${{ steps.vars.outputs.shorthash }}
         path: ${{github.workspace}}/build/shadPS4.exe
