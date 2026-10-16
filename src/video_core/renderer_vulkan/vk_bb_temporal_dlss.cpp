@@ -9,6 +9,7 @@
 #include <cstring>
 #include <fstream>
 #include <mutex>
+#include <numbers>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -131,6 +132,23 @@ std::array<double, 12> InverseAffine(const std::array<double, 12>& m) {
         inv[row * 4 + 3] =
             -(inv[row * 4 + 0] * m[3] + inv[row * 4 + 1] * m[7] + inv[row * 4 + 2] * m[11]);
     return inv;
+}
+
+// Angle in degrees between the orientations of two affine 3x4 row-major transforms.
+double TurnDegrees(const std::array<double, 12>& a, const std::array<double, 12>& b) {
+    double dot = 0.0, aa = 0.0, bb = 0.0;
+    for (int row = 0; row < 3; ++row) {
+        for (int col = 0; col < 3; ++col) {
+            const int k = row * 4 + col;
+            dot += a[k] * b[k];
+            aa += a[k] * a[k];
+            bb += b[k] * b[k];
+        }
+    }
+    if (aa <= 0.0 || bb <= 0.0)
+        return 0.0;
+    const double cosine = std::clamp((3.0 * dot / std::sqrt(aa * bb) - 1.0) * 0.5, -1.0, 1.0);
+    return std::acos(cosine) * 180.0 / std::numbers::pi;
 }
 
 constexpr u64 DepthProducer = 0xd3c8bb21;  // samples R32 scene depth at slot 0
@@ -354,6 +372,7 @@ struct Tune {
     bool camera_snap = true;
     bool scene_camera = true;
     bool camera_majority = true; // the camera most scene draws use (see ObserveSceneConstants)
+    bool camera_cut_reset = true; // a cut in the game's camera clears the upscaler's history
     float sharpness = 0.6f;
     bool swap = false;
     bool depth_inverted = false;
@@ -434,7 +453,7 @@ struct BbTemporalDlss::Impl {
     bool decoupled_unsupported{};
     u64 blur_skips{};
     vk::Extent2D render{}, output{};
-    u64 evaluations{}, composites{}, fallbacks{};
+    u64 evaluations{}, composites{}, fallbacks{}, camera_cuts{};
 
     std::unique_ptr<VideoCore::Buffer> coefficients;
     // Scene constants (see bbport docs/upscaler.md): far 3000 at [0], render size at [4..5],
@@ -541,6 +560,8 @@ struct BbTemporalDlss::Impl {
                 next.scene_camera = number != 0;
             else if (key == "camera_majority")
                 next.camera_majority = number != 0;
+            else if (key == "camera_cut_reset")
+                next.camera_cut_reset = number != 0;
             else if (key == "camera_snap")
                 next.camera_snap = number != 0;
             else if (key == "debug_motion")
@@ -1472,7 +1493,28 @@ bool BbTemporalDlss::Impl::RunDlss(const Instance& instance, Runtime& runtime, S
     upscaled_tone_mapped = renodx;
     const DlssNgx::Resource depth_resource{depth->backing->image.image, *depth_view.image_view,
                                            Range, vk::Format::eR32Sfloat, in};
-    const bool reset = !history_valid;
+    // A cut in the game's camera (cutscene shots) would blend two unrelated pictures in DLSS,
+    // frame generation and OptiScaler's Neural Rendering, which all follow this reset; loading
+    // screens already reset (DisplayCopyDone). A map-section switch moves the coordinates by
+    // ~200 units but keeps the view, and the camera pulling in on a wall moves a few units
+    // without turning: neither is a cut.
+    bool camera_cut = false;
+    if (tune.camera_cut_reset && frame_has_camera && camera.valid && previous_camera.valid) {
+        const double turned = TurnDegrees(previous_camera.view, camera.view);
+        const double moved = std::hypot(camera.inv_view[3] - previous_camera.inv_view[3],
+                                        camera.inv_view[7] - previous_camera.inv_view[7],
+                                        camera.inv_view[11] - previous_camera.inv_view[11]);
+        const double zoom = std::abs(double(camera.proj[1]) / previous_camera.proj[1] - 1.0);
+        const bool section = moved > 20.0;
+        camera_cut = turned > 50.0 || zoom > 0.1 ||
+                     (section ? turned > 15.0 : moved > 12.0 || (moved > 2.5 && turned > 20.0));
+        if (camera_cut && (++camera_cuts <= 10 || camera_cuts % 100 == 0))
+            LOG_INFO(Render_Vulkan,
+                     "[DLSS-TEMPORAL] Camera cut {} (turned {:.0f} degrees, moved {:.1f}, zoom "
+                     "{:.2f}): history reset",
+                     camera_cuts, turned, moved, zoom);
+    }
+    const bool reset = !history_valid || camera_cut;
     const DlssNgx::EvalDesc eval{(tune.swap ? applied[1] : applied[0]) * tune.sign_x,
                                  (tune.swap ? applied[0] : applied[1]) * tune.sign_y, reset,
                                  frame_ms};
