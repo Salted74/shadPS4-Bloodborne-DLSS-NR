@@ -36,6 +36,7 @@ path = [
     "src/resources/silver.png",
     "src/resources/trophy.wav",
     "AGENTS.md",
+    "CLAUDE.md",
     "src/resources/amd_rcp_index_table.bin.zstd",
     "src/resources/amd_rsqrt_index_table.bin.zstd",
 ]
