@@ -8,6 +8,7 @@
 #include "common/logging/formatter.h"
 #include "common/path_util.h"
 #include "common/signal_context.h"
+#include "common/string_util.h"
 #include "core/cpu_patches.h" // Windows static guest red-zone protection
 #include "core/libraries/kernel/kernel.h"
 #include "core/libraries/kernel/threads/exception.h"
@@ -16,8 +17,11 @@
 #include "emulator.h"
 
 #ifdef _WIN32
+#include <algorithm>
+#include <cstring>
 #include <filesystem>
 #include <mutex>
+#include <optional>
 #include <windows.h>
 // After windows.h.
 #include <dbghelp.h>
@@ -49,30 +53,18 @@ static std::string ModuleOffset(PVOID address) {
                        reinterpret_cast<uintptr_t>(address) - reinterpret_cast<uintptr_t>(module));
 }
 
-// The crashing thread's calls, with shadPS4's functions and lines when shadPS4.pdb is next to
-// the executable.
-static void LogCrashStack(const CONTEXT& crash_context) {
-    HANDLE process{};
-    if (!DuplicateHandle(GetCurrentProcess(), GetCurrentProcess(), GetCurrentProcess(), &process, 0,
-                         FALSE, DUPLICATE_SAME_ACCESS)) {
-        return;
-    }
-    std::wstring executable(MAX_PATH, L'\0');
-    executable.resize(GetModuleFileNameW(nullptr, executable.data(), MAX_PATH));
-    const auto directory = std::filesystem::path{executable}.parent_path().wstring();
-    SymSetOptions(SYMOPT_UNDNAME | SYMOPT_DEFERRED_LOADS | SYMOPT_LOAD_LINES |
-                  SYMOPT_FAIL_CRITICAL_ERRORS | SYMOPT_NO_PROMPTS);
-    const bool symbols = SymInitializeW(process, directory.c_str(), TRUE);
+// Up to max_depth frames, with shadPS4's functions and lines when shadPS4.pdb is next to the
+// executable.
+static void LogStack(HANDLE process, HANDLE thread, CONTEXT context, u32 max_depth,
+                     PREAD_PROCESS_MEMORY_ROUTINE64 read_memory) {
     const auto main_module = reinterpret_cast<DWORD64>(GetModuleHandleW(nullptr));
-    CONTEXT context = crash_context;
     STACKFRAME64 frame{};
     frame.AddrPC = {context.Rip, 0, AddrModeFlat};
     frame.AddrFrame = {context.Rbp, 0, AddrModeFlat};
     frame.AddrStack = {context.Rsp, 0, AddrModeFlat};
-    LOG_CRITICAL(Debug, "Call stack:");
-    for (u32 depth = 0; depth < 64; ++depth) {
-        if (!StackWalk64(IMAGE_FILE_MACHINE_AMD64, process, GetCurrentThread(), &frame, &context,
-                         nullptr, SymFunctionTableAccess64, SymGetModuleBase64, nullptr) ||
+    for (u32 depth = 0; depth < max_depth; ++depth) {
+        if (!StackWalk64(IMAGE_FILE_MACHINE_AMD64, process, thread, &frame, &context, read_memory,
+                         SymFunctionTableAccess64, SymGetModuleBase64, nullptr) ||
             frame.AddrPC.Offset == 0) {
             break;
         }
@@ -80,7 +72,7 @@ static void LogCrashStack(const CONTEXT& crash_context) {
         // Above the first frame the address is a return address: the call is just before it.
         const DWORD64 call = depth == 0 ? pc : pc - 1;
         std::string location = ModuleOffset(reinterpret_cast<PVOID>(pc));
-        if (symbols && SymGetModuleBase64(process, call) == main_module) {
+        if (SymGetModuleBase64(process, call) == main_module) {
             alignas(SYMBOL_INFO) char storage[sizeof(SYMBOL_INFO) + MAX_SYM_NAME]{};
             auto* symbol = reinterpret_cast<SYMBOL_INFO*>(storage);
             symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
@@ -97,18 +89,14 @@ static void LogCrashStack(const CONTEXT& crash_context) {
         }
         LOG_CRITICAL(Debug, "  #{} {}", depth, location);
     }
-    if (symbols) {
-        SymCleanup(process);
-    }
-    CloseHandle(process);
 }
 
-static void WriteCrashDump(EXCEPTION_POINTERS* pExp) {
-    const auto path = Common::FS::GetUserPath(Common::FS::PathType::LogDir) / "crash.dmp";
+static std::optional<std::filesystem::path> WriteCrashDump(EXCEPTION_POINTERS* pExp) {
+    auto path = Common::FS::GetUserPath(Common::FS::PathType::LogDir) / "crash.dmp";
     const HANDLE file = CreateFileW(path.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS,
                                     FILE_ATTRIBUTE_NORMAL, nullptr);
     if (file == INVALID_HANDLE_VALUE) {
-        return;
+        return std::nullopt;
     }
     MINIDUMP_EXCEPTION_INFORMATION exception{GetCurrentThreadId(), pExp, FALSE};
     const bool written =
@@ -116,9 +104,85 @@ static void WriteCrashDump(EXCEPTION_POINTERS* pExp) {
                           MINIDUMP_TYPE(MiniDumpWithThreadInfo | MiniDumpWithUnloadedModules),
                           &exception, nullptr, nullptr);
     CloseHandle(file);
-    if (written) {
-        LOG_CRITICAL(Debug, "Crash dump written to {}", fmt::UTF(path.u8string()));
+    if (!written) {
+        return std::nullopt;
     }
+    LOG_CRITICAL(Debug, "Crash dump written to {}", fmt::UTF(path.u8string()));
+    return path;
+}
+
+struct DumpedStack {
+    DWORD64 start;
+    const u8* data;
+    DWORD size;
+};
+static thread_local const DumpedStack* dumped_stack{};
+
+static BOOL CALLBACK ReadDumpedStack(HANDLE process, DWORD64 address, PVOID buffer, DWORD size,
+                                     LPDWORD read) {
+    if (dumped_stack && address >= dumped_stack->start &&
+        address + size <= dumped_stack->start + dumped_stack->size) {
+        std::memcpy(buffer, dumped_stack->data + (address - dumped_stack->start), size);
+        *read = size;
+        return TRUE;
+    }
+    SIZE_T bytes{};
+    const BOOL result =
+        ReadProcessMemory(process, reinterpret_cast<LPCVOID>(address), buffer, size, &bytes);
+    *read = DWORD(bytes);
+    return result;
+}
+
+// The other threads as the minidump caught them: their stacks come from the dump, which was
+// written while they were suspended.
+static void LogDumpedThreads(HANDLE process, const std::filesystem::path& path) {
+    const HANDLE file = CreateFileW(path.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr,
+                                    OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (file == INVALID_HANDLE_VALUE) {
+        return;
+    }
+    const HANDLE mapping = CreateFileMappingW(file, nullptr, PAGE_READONLY, 0, 0, nullptr);
+    auto* base =
+        mapping ? static_cast<u8*>(MapViewOfFile(mapping, FILE_MAP_READ, 0, 0, 0)) : nullptr;
+    PMINIDUMP_DIRECTORY directory{};
+    PVOID stream{};
+    ULONG stream_size{};
+    if (base && MiniDumpReadDumpStream(base, ThreadListStream, &directory, &stream, &stream_size)) {
+        const auto* list = static_cast<const MINIDUMP_THREAD_LIST*>(stream);
+        for (ULONG i = 0; i < list->NumberOfThreads; ++i) {
+            const auto& dumped = list->Threads[i];
+            if (dumped.ThreadId == GetCurrentThreadId()) {
+                continue;
+            }
+            const HANDLE thread =
+                OpenThread(THREAD_QUERY_LIMITED_INFORMATION, FALSE, dumped.ThreadId);
+            std::string name;
+            PWSTR description{};
+            if (thread && SUCCEEDED(GetThreadDescription(thread, &description)) && description) {
+                name = Common::UTF16ToUTF8(description);
+                LocalFree(description);
+            }
+            LOG_CRITICAL(Debug, "Thread {} {}:", dumped.ThreadId, name);
+            CONTEXT context{};
+            std::memcpy(&context, base + dumped.ThreadContext.Rva,
+                        std::min<size_t>(dumped.ThreadContext.DataSize, sizeof(context)));
+            const DumpedStack stack{dumped.Stack.StartOfMemoryRange, base + dumped.Stack.Memory.Rva,
+                                    dumped.Stack.Memory.DataSize};
+            dumped_stack = &stack;
+            LogStack(process, thread ? thread : GetCurrentThread(), context, 24, ReadDumpedStack);
+            dumped_stack = nullptr;
+            if (thread) {
+                CloseHandle(thread);
+            }
+        }
+    }
+    if (base) {
+        UnmapViewOfFile(base);
+    }
+    if (mapping) {
+        CloseHandle(mapping);
+    }
+    CloseHandle(file);
 }
 
 static void LogCrashDetails(EXCEPTION_POINTERS* pExp) {
@@ -148,8 +212,30 @@ static void LogCrashDetails(EXCEPTION_POINTERS* pExp) {
                  "r8={:#x} r9={:#x} r10={:#x} r11={:#x} r12={:#x} r13={:#x} r14={:#x} r15={:#x}",
                  context.R8, context.R9, context.R10, context.R11, context.R12, context.R13,
                  context.R14, context.R15);
-    LogCrashStack(context);
-    WriteCrashDump(pExp);
+
+    HANDLE process{};
+    if (!DuplicateHandle(GetCurrentProcess(), GetCurrentProcess(), GetCurrentProcess(), &process, 0,
+                         FALSE, DUPLICATE_SAME_ACCESS)) {
+        WriteCrashDump(pExp);
+        reporting = false;
+        return;
+    }
+    std::wstring executable(MAX_PATH, L'\0');
+    executable.resize(GetModuleFileNameW(nullptr, executable.data(), MAX_PATH));
+    const auto directory = std::filesystem::path{executable}.parent_path().wstring();
+    SymSetOptions(SYMOPT_UNDNAME | SYMOPT_DEFERRED_LOADS | SYMOPT_LOAD_LINES |
+                  SYMOPT_FAIL_CRITICAL_ERRORS | SYMOPT_NO_PROMPTS);
+    if (SymInitializeW(process, directory.c_str(), TRUE)) {
+        LOG_CRITICAL(Debug, "Call stack:");
+        LogStack(process, GetCurrentThread(), context, 64, nullptr);
+        if (const auto dump = WriteCrashDump(pExp)) {
+            LogDumpedThreads(process, *dump);
+        }
+        SymCleanup(process);
+    } else {
+        WriteCrashDump(pExp);
+    }
+    CloseHandle(process);
     reporting = false;
 }
 
