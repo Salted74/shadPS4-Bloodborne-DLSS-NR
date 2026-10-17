@@ -5,6 +5,8 @@
 #include "common/arch.h"
 #include "common/assert.h"
 #include "common/decoder.h"
+#include "common/logging/formatter.h"
+#include "common/path_util.h"
 #include "common/signal_context.h"
 #include "core/cpu_patches.h" // Windows static guest red-zone protection
 #include "core/libraries/kernel/kernel.h"
@@ -14,7 +16,11 @@
 #include "emulator.h"
 
 #ifdef _WIN32
+#include <filesystem>
+#include <mutex>
 #include <windows.h>
+// After windows.h.
+#include <dbghelp.h>
 static constexpr DWORD MS_VC_EXCEPTION = 0x406D1388;
 #else
 #include <csignal>
@@ -38,9 +44,113 @@ static std::string ModuleOffset(PVOID address) {
     char path[MAX_PATH]{};
     const DWORD length = GetModuleFileNameA(module, path, MAX_PATH);
     const std::string_view full{path, length};
-    const auto slash = full.find_last_of("\/");
+    const auto slash = full.find_last_of("\\/");
     return fmt::format("{}+{:#x}", full.substr(slash == std::string_view::npos ? 0 : slash + 1),
                        reinterpret_cast<uintptr_t>(address) - reinterpret_cast<uintptr_t>(module));
+}
+
+// The crashing thread's calls, with shadPS4's functions and lines when shadPS4.pdb is next to
+// the executable.
+static void LogCrashStack(const CONTEXT& crash_context) {
+    HANDLE process{};
+    if (!DuplicateHandle(GetCurrentProcess(), GetCurrentProcess(), GetCurrentProcess(), &process, 0,
+                         FALSE, DUPLICATE_SAME_ACCESS)) {
+        return;
+    }
+    std::wstring executable(MAX_PATH, L'\0');
+    executable.resize(GetModuleFileNameW(nullptr, executable.data(), MAX_PATH));
+    const auto directory = std::filesystem::path{executable}.parent_path().wstring();
+    SymSetOptions(SYMOPT_UNDNAME | SYMOPT_DEFERRED_LOADS | SYMOPT_LOAD_LINES |
+                  SYMOPT_FAIL_CRITICAL_ERRORS | SYMOPT_NO_PROMPTS);
+    const bool symbols = SymInitializeW(process, directory.c_str(), TRUE);
+    const auto main_module = reinterpret_cast<DWORD64>(GetModuleHandleW(nullptr));
+    CONTEXT context = crash_context;
+    STACKFRAME64 frame{};
+    frame.AddrPC = {context.Rip, 0, AddrModeFlat};
+    frame.AddrFrame = {context.Rbp, 0, AddrModeFlat};
+    frame.AddrStack = {context.Rsp, 0, AddrModeFlat};
+    LOG_CRITICAL(Debug, "Call stack:");
+    for (u32 depth = 0; depth < 64; ++depth) {
+        if (!StackWalk64(IMAGE_FILE_MACHINE_AMD64, process, GetCurrentThread(), &frame, &context,
+                         nullptr, SymFunctionTableAccess64, SymGetModuleBase64, nullptr) ||
+            frame.AddrPC.Offset == 0) {
+            break;
+        }
+        const DWORD64 pc = frame.AddrPC.Offset;
+        // Above the first frame the address is a return address: the call is just before it.
+        const DWORD64 call = depth == 0 ? pc : pc - 1;
+        std::string location = ModuleOffset(reinterpret_cast<PVOID>(pc));
+        if (symbols && SymGetModuleBase64(process, call) == main_module) {
+            alignas(SYMBOL_INFO) char storage[sizeof(SYMBOL_INFO) + MAX_SYM_NAME]{};
+            auto* symbol = reinterpret_cast<SYMBOL_INFO*>(storage);
+            symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
+            symbol->MaxNameLen = MAX_SYM_NAME;
+            DWORD64 displacement{};
+            if (SymFromAddr(process, call, &displacement, symbol)) {
+                location += fmt::format(" {}", symbol->Name);
+            }
+            IMAGEHLP_LINE64 line{.SizeOfStruct = sizeof(IMAGEHLP_LINE64)};
+            DWORD line_displacement{};
+            if (SymGetLineFromAddr64(process, call, &line_displacement, &line)) {
+                location += fmt::format(" ({}:{})", line.FileName, line.LineNumber);
+            }
+        }
+        LOG_CRITICAL(Debug, "  #{} {}", depth, location);
+    }
+    if (symbols) {
+        SymCleanup(process);
+    }
+    CloseHandle(process);
+}
+
+static void WriteCrashDump(EXCEPTION_POINTERS* pExp) {
+    const auto path = Common::FS::GetUserPath(Common::FS::PathType::LogDir) / "crash.dmp";
+    const HANDLE file = CreateFileW(path.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS,
+                                    FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (file == INVALID_HANDLE_VALUE) {
+        return;
+    }
+    MINIDUMP_EXCEPTION_INFORMATION exception{GetCurrentThreadId(), pExp, FALSE};
+    const bool written =
+        MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), file,
+                          MINIDUMP_TYPE(MiniDumpWithThreadInfo | MiniDumpWithUnloadedModules),
+                          &exception, nullptr, nullptr);
+    CloseHandle(file);
+    if (written) {
+        LOG_CRITICAL(Debug, "Crash dump written to {}", fmt::UTF(path.u8string()));
+    }
+}
+
+static void LogCrashDetails(EXCEPTION_POINTERS* pExp) {
+    // An exception inside the report itself is not reported again.
+    static thread_local bool reporting = false;
+    if (reporting) {
+        return;
+    }
+    reporting = true;
+    static std::mutex mutex;
+    std::scoped_lock lock{mutex};
+    const auto& record = *pExp->ExceptionRecord;
+    const auto& context = *pExp->ContextRecord;
+    if (record.ExceptionCode == EXCEPTION_ACCESS_VIOLATION && record.NumberParameters >= 2) {
+        const auto operation = record.ExceptionInformation[0];
+        LOG_CRITICAL(Debug, "Access violation {} {:#x}",
+                     operation == 0   ? "reading"
+                     : operation == 1 ? "writing"
+                                      : "executing",
+                     record.ExceptionInformation[1]);
+    }
+    LOG_CRITICAL(Debug,
+                 "rax={:#x} rbx={:#x} rcx={:#x} rdx={:#x} rsi={:#x} rdi={:#x} rbp={:#x} rsp={:#x}",
+                 context.Rax, context.Rbx, context.Rcx, context.Rdx, context.Rsi, context.Rdi,
+                 context.Rbp, context.Rsp);
+    LOG_CRITICAL(Debug,
+                 "r8={:#x} r9={:#x} r10={:#x} r11={:#x} r12={:#x} r13={:#x} r14={:#x} r15={:#x}",
+                 context.R8, context.R9, context.R10, context.R11, context.R12, context.R13,
+                 context.R14, context.R15);
+    LogCrashStack(context);
+    WriteCrashDump(pExp);
+    reporting = false;
 }
 
 static LONG WINAPI SignalHandler(EXCEPTION_POINTERS* pExp) noexcept {
@@ -159,6 +269,9 @@ static LONG WINAPI SignalHandler(EXCEPTION_POINTERS* pExp) noexcept {
     if (report_unhandled) {
         LOG_CRITICAL(Debug, "Unhandled Exception code {:#x} at {} ({})", code, address,
                      ModuleOffset(address));
+        if (guest_info._si_signo != 0) {
+            LogCrashDetails(pExp);
+        }
         Common::Singleton<Core::Emulator>::Instance()->Shutdown();
     }
 

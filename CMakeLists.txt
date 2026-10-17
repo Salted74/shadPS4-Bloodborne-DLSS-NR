@@ -1465,7 +1465,7 @@ elseif (${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
 endif()
 
 if (WIN32)
-    target_link_libraries(shadps4 PRIVATE mincore wepoll wbemuuid bcrypt)
+    target_link_libraries(shadps4 PRIVATE mincore wepoll wbemuuid bcrypt dbghelp)
 
     if (MSVC)
         # MSVC likes putting opinions on what people can use, disable:
