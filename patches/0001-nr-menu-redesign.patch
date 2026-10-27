@@ -1,4 +1,4 @@
-From 7c0551701bed09563304d74b926694b4161fc792 Mon Sep 17 00:00:00 2001
+From 0cc20772171e71cde9f20ddf6964eb980833a2bf Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Tue, 27 Oct 2026 20:01:12 +0000
 Subject: [PATCH] Neural Rendering menu: four task-ordered pages instead of
@@ -32,13 +32,13 @@ Claude-Session: https://claude.ai/code/session_01UpEXeT63ehDeQQgQVYZBQx
  OptiScaler/dlssnr/DlssNrFeature_Vk.cpp    |    8 +
  OptiScaler/dlssnr/DlssNrFeature_Vk.h      |    2 +
  OptiScaler/dlssnr/DlssNr_LookPresets.h    |    3 +
- OptiScaler/dlssnr/DlssNr_Menu.cpp         | 2379 ++++++++++++---------
+ OptiScaler/dlssnr/DlssNr_Menu.cpp         | 2417 ++++++++++++---------
  OptiScaler/menu/MenuPages.h               |   44 +-
  OptiScaler/menu/menu_common.cpp           |   24 +-
  OptiScaler/menu/menu_common.h             |   12 +
  OptiScaler/shaders/dlssnr/DlssNr_Dx12.cpp |    8 +
  tests/menu_pages_smoke.cpp                |   28 +-
- 10 files changed, 1440 insertions(+), 1071 deletions(-)
+ 10 files changed, 1489 insertions(+), 1060 deletions(-)
 
 diff --git a/OptiScaler/dlssnr/DlssNrFeature_Dx12.h b/OptiScaler/dlssnr/DlssNrFeature_Dx12.h
 index 76196aad..812d4e7c 100644
@@ -101,10 +101,18 @@ index 428ac644..9f9a7c99 100644
      { Look::Native, "Native", "NVIDIA's own look, as games with built-in NR use it: Linear curve, no local tone.",
        false, detail::Native(), false, {} },
 diff --git a/OptiScaler/dlssnr/DlssNr_Menu.cpp b/OptiScaler/dlssnr/DlssNr_Menu.cpp
-index cc8e2902..8130146c 100644
+index cc8e2902..83b0ba41 100644
 --- a/OptiScaler/dlssnr/DlssNr_Menu.cpp
 +++ b/OptiScaler/dlssnr/DlssNr_Menu.cpp
-@@ -71,6 +71,7 @@ static bool HaveGameExposure()
+@@ -51,6 +51,7 @@
+ #include <cmath>
+ #include <cstdio>
+ #include <cstring>
++#include <cwchar>
+ #include <cwctype>
+ #include <filesystem>
+ 
+@@ -71,6 +72,7 @@ static bool HaveGameExposure()
  }
  
  static void HelpMarker(const char* tip);
@@ -112,7 +120,7 @@ index cc8e2902..8130146c 100644
  
  // Retry after a failure, on whichever backend failed: Direct3D 12 at once, native Vulkan on its next frame.
  static void RetryNr()
-@@ -142,7 +143,7 @@ static float TrimToEv(float trim, float neutral)
+@@ -142,7 +144,7 @@ static float TrimToEv(float trim, float neutral)
  
  static float EvToTrim(float ev, float neutral) { return DlssNrExposureCalibrate::TrimForEv(ev, neutral); }
  
@@ -121,7 +129,7 @@ index cc8e2902..8130146c 100644
  // many Trim anchors the ini holds for that source: they are ini-only now and take over from the slider, so
  // with any present the slider is shown disabled and says why. `detectedDefault` is set for a source whose
  // default is decided per game (Automatic, see DlssNr_AutoTrimDefault.h): the slider then shows it while the
-@@ -156,7 +157,7 @@ static void RenderTrimEvSlider(CustomOptional<float>& trim, float neutral, size_
+@@ -156,7 +158,7 @@ static void RenderTrimEvSlider(CustomOptional<float>& trim, float neutral, size_
      float ev = std::clamp(TrimToEv(shown, neutral), minEv, maxEv);
  
      ImGui::BeginDisabled(anchorCount > 0);
@@ -130,7 +138,7 @@ index cc8e2902..8130146c 100644
      if (ImGui::SliderFloat(sliderLabel.c_str(), &ev, minEv, maxEv, "%+.1f EV"))
          trim = EvToTrim(ev, neutral);
  
-@@ -180,9 +181,9 @@ static void RenderTrimEvSlider(CustomOptional<float>& trim, float neutral, size_
+@@ -180,9 +182,9 @@ static void RenderTrimEvSlider(CustomOptional<float>& trim, float neutral, size_
                              (unsigned int) anchorCount);
  }
  
@@ -143,7 +151,7 @@ index cc8e2902..8130146c 100644
  static void RenderBrightnessPoints(CustomOptional<std::string>& table, float neutral, const char* idSuffix)
  {
      std::string text = table.value_or_default();
-@@ -336,8 +337,8 @@ static void RenderTuneForThisScene(uint32_t source, CustomOptional<float>& trim,
+@@ -336,8 +338,8 @@ static void RenderTuneForThisScene(uint32_t source, CustomOptional<float>& trim,
              }
  
              if (ImGui::IsItemHovered())
@@ -154,7 +162,7 @@ index cc8e2902..8130146c 100644
          }
          else
          {
-@@ -407,7 +408,7 @@ static void RenderTuneForThisScene(uint32_t source, CustomOptional<float>& trim,
+@@ -407,7 +409,7 @@ static void RenderTuneForThisScene(uint32_t source, CustomOptional<float>& trim,
              DlssNr::StartExposureCalibration(source);
  
          ImGui::EndDisabled();
@@ -163,7 +171,7 @@ index cc8e2902..8130146c 100644
                     "for a few seconds; the picture gets brighter and darker while it runs. Nothing changes until you "
                     "press Apply or Save as point.");
  
-@@ -511,6 +512,18 @@ static void HelpMarker(const char* tip)
+@@ -511,6 +513,18 @@ static void HelpMarker(const char* tip)
      }
  }
  
@@ -182,7 +190,7 @@ index cc8e2902..8130146c 100644
  // A slider that only writes its value when the handle is released.
  //
  // Some controls -- intensity, the structure and tone strengths -- are read by the model once, when
-@@ -594,35 +607,6 @@ static bool InheritedProfileCombo(const char* label, CustomOptional<uint32_t, No
+@@ -594,35 +608,6 @@ static bool InheritedProfileCombo(const char* label, CustomOptional<uint32_t, No
      return true;
  }
  
@@ -218,7 +226,7 @@ index cc8e2902..8130146c 100644
  // A later pass's override (Pass 2 / Pass 3 keys): absent when none of its keys is set; a key not set takes pass 1's
  // value, Local tone 0 (as PassProfiles.h runs it).
  template <typename StyleOpt, typename FloatOpt, typename BoolOpt>
-@@ -756,8 +740,6 @@ static bool PresetButton(const char* label, bool active, float width = 0.0f)
+@@ -756,8 +741,6 @@ static bool PresetButton(const char* label, bool active, float width = 0.0f)
      return pressed;
  }
  
@@ -227,7 +235,7 @@ index cc8e2902..8130146c 100644
  // Quality tiers (High/Medium/Low/Potato) for running NR at a reduced model resolution, offered as
  // two preset rows that differ only in where NR runs: Pre-SR (Before Super Resolution) and Post-SR
  // (After Super Resolution). Each touches only Upscale Mode, Upscale Method and Model resolution, plus Auto model
-@@ -781,23 +763,26 @@ static constexpr ResolutionTier ResolutionTiers[] = {
+@@ -781,23 +764,26 @@ static constexpr ResolutionTier ResolutionTiers[] = {
      { "Potato", 0u, 0.50f },
  };
  
@@ -261,7 +269,7 @@ index cc8e2902..8130146c 100644
  }
  
  static void ApplyResolutionTier(Config* config, int& pendingScale, const ResolutionTier& tier,
-@@ -1132,7 +1117,7 @@ static void RenderNativeMode(Config* config, bool nrEnabled, bool& finishedPictu
+@@ -1132,7 +1118,7 @@ static void RenderNativeMode(Config* config, bool nrEnabled, bool& finishedPictu
                                                 "use this, but NR does not run.";
          break;
      case Warning::NeedsFinishedPicture:
@@ -270,7 +278,7 @@ index cc8e2902..8130146c 100644
          break;
      case Warning::None:
          break;
-@@ -1175,6 +1160,22 @@ static void RenderNativeMode(Config* config, bool nrEnabled, bool& finishedPictu
+@@ -1175,6 +1161,22 @@ static void RenderNativeMode(Config* config, bool nrEnabled, bool& finishedPictu
      StatusSlotEnd(slot, 4);
  }
  
@@ -293,7 +301,7 @@ index cc8e2902..8130146c 100644
  // Model-resolution drag in flight, shared by the tier presets (which clear it) and the Model resolution slider.
  static int pendingScale = -1;
  
-@@ -1182,7 +1183,7 @@ static int pendingScale = -1;
+@@ -1182,7 +1184,7 @@ static int pendingScale = -1;
  struct NrCommon
  {
      bool enabled;
@@ -302,7 +310,7 @@ index cc8e2902..8130146c 100644
      // can already report finished-picture-specific text.
      bool finishedPicture;
      // Either backend. The two keep separate state, and on a native Vulkan game the D3D12 side
-@@ -1197,6 +1198,82 @@ static NrCommon ReadNrCommon(Config* config)
+@@ -1197,6 +1199,127 @@ static NrCommon ReadNrCommon(Config* config)
               DlssNr::IsRunningVk() };
  }
  
@@ -332,12 +340,46 @@ index cc8e2902..8130146c 100644
 +    return nr.vulkan ? DlssNr::RanBeforeUpscaleVk() : DlssNr::RanBeforeUpscale();
 +}
 +
-+// The nvngx_dlssnr.dll the model runs from (or will load): its file version, read once it is found, retried at most
-+// every two seconds until then. The module once it is loaded, else the two folders NR loads it from -- never a
-+// recursive search, this runs while the menu is drawn.
-+static std::optional<version_t> NrRuntimeVersion()
++// The nvngx_dlssnr.dll the model runs from (or will load): its file version, and how many trained networks
++// ("weights") it carries. NVIDIA's DLLs keep each as a resource named WEIGHTS_*: 310.8 has one (WEIGHTS_HT), 310.9 two
++// (WEIGHTS_HT and WEIGHTS_CC_SMALL_FP8), and a backport can have two whatever its version says.
++struct NrRuntime
 +{
-+    static std::optional<version_t> found;
++    version_t version;
++    int weightSets = 0; // 0: the resources could not be counted
++};
++
++static int CountWeightSets(HMODULE module)
++{
++    int count = 0;
++
++    EnumResourceTypesW(
++        module,
++        [](HMODULE m, LPWSTR type, LONG_PTR param) -> BOOL
++        {
++            EnumResourceNamesW(
++                m, type,
++                [](HMODULE, LPCWSTR, LPWSTR name, LONG_PTR param) -> BOOL
++                {
++                    if (!IS_INTRESOURCE(name) && std::wcsncmp(name, L"WEIGHTS_", 8) == 0)
++                        ++*reinterpret_cast<int*>(param);
++
++                    return TRUE;
++                },
++                param);
++
++            return TRUE;
++        },
++        reinterpret_cast<LONG_PTR>(&count));
++
++    return count;
++}
++
++// Read once the DLL is found, retried at most every two seconds until then. The module once it is loaded, else the two
++// folders NR loads it from -- never a recursive search, this runs while the menu is drawn.
++static std::optional<NrRuntime> NrRuntimeInfo()
++{
++    static std::optional<NrRuntime> found;
 +    static double nextTryMs = 0.0;
 +
 +    if (found.has_value())
@@ -350,12 +392,13 @@ index cc8e2902..8130146c 100644
 +
 +    nextTryMs = now + 2000.0;
 +    std::filesystem::path path;
++    const HMODULE loaded = GetModuleHandleW(L"nvngx_dlssnr.dll");
 +
-+    if (const HMODULE module = GetModuleHandleW(L"nvngx_dlssnr.dll"); module != nullptr)
++    if (loaded != nullptr)
 +    {
 +        wchar_t buffer[MAX_PATH] {};
 +
-+        if (GetModuleFileNameW(module, buffer, MAX_PATH) != 0)
++        if (GetModuleFileNameW(loaded, buffer, MAX_PATH) != 0)
 +            path = buffer;
 +    }
 +
@@ -367,25 +410,35 @@ index cc8e2902..8130146c 100644
 +            path = folder / L"nvngx_dlssnr.dll";
 +    }
 +
-+    version_t version;
++    NrRuntime runtime;
 +
-+    if (!path.empty() && Util::GetFileVersion(path.wstring(), &version) && version.major != 0)
-+        found = version;
++    if (path.empty() || !Util::GetFileVersion(path.wstring(), &runtime.version) || runtime.version.major == 0)
++        return std::nullopt;
 +
++    // Mapped as data only when NR has not loaded it yet: nothing in it runs.
++    const HMODULE module = loaded != nullptr
++                               ? loaded
++                               : LoadLibraryExW(path.wstring().c_str(), nullptr,
++                                                LOAD_LIBRARY_AS_DATAFILE | LOAD_LIBRARY_AS_IMAGE_RESOURCE);
++
++    if (module != nullptr)
++    {
++        runtime.weightSets = CountWeightSets(module);
++
++        if (loaded == nullptr)
++            FreeLibrary(module);
++    }
++
++    found = runtime;
 +    return found;
 +}
-+
-+// NVIDIA's DLLs from 310.9 on carry two trained networks ("weights"), picked by [DlssNr] Preset (the model's
-+// DLSSNR.Hint.Render.Preset): 2, the DLL's default and what 0 falls back to, and 1, the network of 310.8 -- the only
-+// one a 310.8 DLL has.
-+static bool HasBothWeights(const version_t& v) { return v.major > 310 || (v.major == 310 && v.minor >= 9); }
 +
 +static bool OriginalWeights(const Config* config) { return config->DlssNrPreset.value_or_default() == 1u; }
 +
  static void RenderEnableToggle(Config* config)
  {
      bool enabled = config->DlssNrEnabled.value_or_default();
-@@ -1206,7 +1283,7 @@ static void RenderEnableToggle(Config* config)
+@@ -1206,7 +1329,7 @@ static void RenderEnableToggle(Config* config)
      HelpMarker("Turns DLSS Neural Rendering on. Needs nvngx_dlssnr.dll and the included nvngx.dll_dlssnr.dll.");
  }
  
@@ -394,7 +447,7 @@ index cc8e2902..8130146c 100644
  static void RenderRunningStatus(Config* config, const NrCommon& nr)
  {
      const bool enabled = nr.enabled;
-@@ -1229,8 +1306,8 @@ static void RenderRunningStatus(Config* config, const NrCommon& nr)
+@@ -1229,8 +1352,8 @@ static void RenderRunningStatus(Config* config, const NrCommon& nr)
  
          if (reason[0] != 0)
          {
@@ -404,7 +457,7 @@ index cc8e2902..8130146c 100644
  
              if (nativeVk && !DlssNr::RetryableVk())
                  ImGui::TextUnformatted("A retry cannot fix this; restart the game.");
-@@ -1296,11 +1373,45 @@ static void RenderRunningStatus(Config* config, const NrCommon& nr)
+@@ -1296,11 +1419,45 @@ static void RenderRunningStatus(Config* config, const NrCommon& nr)
          ImGui::SameLine();
          ImGui::TextDisabled("(?)");
          if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
@@ -452,7 +505,7 @@ index cc8e2902..8130146c 100644
          if (!vulkan && DlssNr::BackendName()[0] != 0)
              ImGui::TextDisabled("Model backend: %s", DlssNr::BackendName());
      }
-@@ -1315,7 +1426,7 @@ static void RenderStatusLine(const NrCommon& nr)
+@@ -1315,7 +1472,7 @@ static void RenderStatusLine(const NrCommon& nr)
      if (!nr.enabled)
          ImGui::TextDisabled("NR off.");
      else if (!DlssNr::IsRunning() && !nr.vulkan)
@@ -461,7 +514,7 @@ index cc8e2902..8130146c 100644
      else if (ms.has_value())
          ImGui::TextColored(ImVec4(0.4f, 0.9f, 0.5f, 1.0f), "Running%s - %.2f ms elapsed",
                             nr.vulkan ? " natively on Vulkan" : "", ms.value());
-@@ -1524,7 +1635,7 @@ static void RenderSceneCutToggle(Config* config)
+@@ -1524,7 +1681,7 @@ static void RenderSceneCutToggle(Config* config)
      bool act = setting >= 2;
  
      ImGui::BeginDisabled(setting == 0);
@@ -470,7 +523,7 @@ index cc8e2902..8130146c 100644
          config->DlssNrSceneCut = act ? 2u : 1u;
      ImGui::EndDisabled();
  
-@@ -1580,7 +1691,7 @@ static void RenderF5LowPage(Config* config, const NrCommon& nr)
+@@ -1580,7 +1737,7 @@ static void RenderF5LowPage(Config* config, const NrCommon& nr)
      RenderLowLatencySection();
  
      // Detail reuse on Optical F5Low's motion: shown here because this is where its saving matters most (NR on the whole
@@ -479,7 +532,7 @@ index cc8e2902..8130146c 100644
      ImGui::SeparatorText("Lighter NR");
      if (!config->DlssNrDetailReuse.value_or_default())
          ImGui::TextUnformatted("Reuse detail between frames: Off");
-@@ -1596,9 +1707,9 @@ static void RenderF5LowPage(Config* config, const NrCommon& nr)
+@@ -1596,9 +1753,9 @@ static void RenderF5LowPage(Config* config, const NrCommon& nr)
              ImGui::TextUnformatted("Reuse detail between frames: On");
      }
      HelpMarker("Runs the model every other frame (or every 3rd) to cut NR's cost by about half (or two thirds); with "
@@ -492,7 +545,7 @@ index cc8e2902..8130146c 100644
  
      // Compress screen edges is another way to lighten NR; it works on the finished picture too. Only its state here.
      {
-@@ -1607,9 +1718,9 @@ static void RenderF5LowPage(Config* config, const NrCommon& nr)
+@@ -1607,9 +1764,9 @@ static void RenderF5LowPage(Config* config, const NrCommon& nr)
          const std::string text = std::string("Compress screen edges: ") + (compress ? line.text : std::string("Off"));
          EdgeCompressionDrawText({ compress ? line.tone : EdgeCompressionLine::Tone::Grey, text });
          HelpMarker("NR works on fewer pixels: the middle stays sharp, the edges are squeezed. Saves GPU time; edges "
@@ -505,7 +558,7 @@ index cc8e2902..8130146c 100644
      }
  
      // The page is Optical F5Low's own, so every control shows and the section starts open.
-@@ -1621,8 +1732,8 @@ static void RenderF5LowPage(Config* config, const NrCommon& nr)
+@@ -1621,8 +1778,8 @@ static void RenderF5LowPage(Config* config, const NrCommon& nr)
              config->DlssNrNativeDebugView = pictures;
  
          if (ImGui::IsItemHovered())
@@ -516,7 +569,7 @@ index cc8e2902..8130146c 100644
  
          switch (CurrentNativeApi())
          {
-@@ -1644,222 +1755,273 @@ static void RenderF5LowPage(Config* config, const NrCommon& nr)
+@@ -1644,222 +1801,287 @@ static void RenderF5LowPage(Config* config, const NrCommon& nr)
      }
  }
  
@@ -535,24 +588,19 @@ index cc8e2902..8130146c 100644
 -          config->DlssNrNativeFrameGenerationOnly.value_or_default() });
 +  public:
 +    ButtonFlow() : _rowRight(ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x) {}
- 
--    ImGui::Text("Optical F5Low (NR for a game with no upscaler call): %s", NativeModeName(shown));
--    ImGui::SameLine();
++
 +    // Call before each button; the item drawn just before (a button or a label) is what it lines up after.
 +    void Next(float width)
 +    {
 +        if (_placed && ImGui::GetItemRectMax().x + ImGui::GetStyle().ItemSpacing.x + width <= _rowRight)
 +            ImGui::SameLine();
- 
--    if (ImGui::SmallButton("Open Optical F5Low##statuslink"))
--        MenuPages::RequestPage(MenuPages::Page::NrF5Low);
++
 +        _placed = true;
 +    }
 +
 +    // A label drawn first counts as placed, so the first button can go beside it.
 +    void Placed() { _placed = true; }
- 
--    const float presetWidth = PresetButtonWidth();
++
 +  private:
 +    float _rowRight;
 +    bool _placed = false;
@@ -565,14 +613,9 @@ index cc8e2902..8130146c 100644
 +static const char* LookWords(DlssNrLook::Look look)
 +{
 +    using DlssNrLook::Look;
- 
--    ImGui::SeparatorText("Look Presets");
++
 +    switch (look)
-     {
--        const auto now = ReadLook(config);
--        // The input styles are skipped above 100% model resolution and on the deferred path (Config.h DlssNrInputStyle)
--        const bool inputStyleOff = config->DlssNrWorkingScale.value_or_default() > 1.0f + 0.005f ||
--                                   config->DlssNrDeferredDlss.value_or_default();
++    {
 +    case Look::Native:
 +        return "NVIDIA's own look, as games with NR built in use it: the game's lighting kept and the picture handed "
 +               "over unchanged. Best when the game hands over its exposure (see Brightness).";
@@ -594,28 +637,16 @@ index cc8e2902..8130146c 100644
 +        return "Experimental: the model is shown the picture with fine contrast boosted and paints more surface "
 +               "texture; gentler on skin.";
 +    }
- 
--        // The base the second row is built on is derived from the settings when one of those looks is in effect, else
--        // it is this session's last pick (Standard at start) and changes nothing until a look is clicked
--        static DlssNrLook::Base pickedBase = DlssNrLook::Base::Standard;
--        const auto inEffect = DlssNrLook::SecondRowInEffect(now);
++
 +    return "";
 +}
- 
--        if (inEffect)
--            pickedBase = inEffect->base;
++
 +static void RenderModelSection(Config* config)
 +{
 +    ImGui::SeparatorText("Model");
- 
--        for (size_t i = 0; i < DlssNrLook::kLookCount; ++i)
--        {
--            const auto& look = DlssNrLook::kLooks[i];
++
 +    const bool original = OriginalWeights(config);
- 
--            // Two rows: the everyday looks, then the ones that aim at part of the picture or restyle it
--            if (i != 0 && i != 4)
--                ImGui::SameLine();
++
 +    // Every pass on the same network: picking here also puts passes 2 and 3 back to following pass 1.
 +    const auto useWeights = [config](uint32_t preset)
 +    {
@@ -623,65 +654,90 @@ index cc8e2902..8130146c 100644
 +        config->DlssNrPass2Preset = std::optional<uint32_t> {};
 +        config->DlssNrPass3Preset = std::optional<uint32_t> {};
 +    };
-+
+ 
+-    ImGui::Text("Optical F5Low (NR for a game with no upscaler call): %s", NativeModeName(shown));
 +    ImGui::AlignTextToFramePadding();
 +    ImGui::TextUnformatted("Weights:");
-+    ImGui::SameLine();
-+
+     ImGui::SameLine();
+ 
+-    if (ImGui::SmallButton("Open Optical F5Low##statuslink"))
+-        MenuPages::RequestPage(MenuPages::Page::NrF5Low);
 +    if (ImGui::RadioButton("New##weights", !original) && original)
 +        useWeights(0u);
- 
--            const bool active = look.isModifier ? inEffect && inEffect->look == look.id
--                                                : DlssNrLook::Matches(now, look.settings);
++
 +    ImGui::SameLine();
  
--            if (PresetButton(look.name, active, presetWidth))
--                WriteLook(config, look.isModifier ? DlssNrLook::ComposeLook(look.id, pickedBase) : look.settings);
+-    const float presetWidth = PresetButtonWidth();
 +    if (ImGui::RadioButton("Original (310.8)##weights", original) && !original)
 +        useWeights(1u);
  
--            if (ImGui::IsItemHovered())
--                ImGui::SetTooltip("%s%s", look.tip,
--                                  look.experimental && inputStyleOff
--                                      ? "\nNo effect right now: the input style is skipped above 100% model "
--                                        "resolution and on the deferred path."
--                                      : "");
+-    ImGui::SeparatorText("Look Presets");
 +    HelpMarker("The trained network the model runs.\n"
 +               "New: the network NVIDIA ships as the default from 310.9 on.\n"
 +               "Original: the first DLSS 5 network, the one 310.8 has.\n"
 +               "Switching rebuilds the model, so the picture pauses for a moment. Applies to every pass.");
 +
-+    if (const auto version = NrRuntimeVersion(); !version.has_value())
++    if (const auto runtime = NrRuntimeInfo(); !runtime.has_value())
++    {
 +        ImGui::TextDisabled("nvngx_dlssnr.dll not found yet. It goes beside OptiScaler or the game's exe.");
-+    else if (HasBothWeights(*version))
-+        ImGui::TextDisabled("Your nvngx_dlssnr.dll (%u.%u.%u) has both networks.", (unsigned int) version->major,
-+                            (unsigned int) version->minor, (unsigned int) version->patch);
++    }
 +    else
-+        ImGui::TextDisabled("Your nvngx_dlssnr.dll (%u.%u.%u) has only the Original network, so both choices look the "
-+                            "same. 310.9 and later add the New one.",
-+                            (unsigned int) version->major, (unsigned int) version->minor,
-+                            (unsigned int) version->patch);
+     {
+-        const auto now = ReadLook(config);
+-        // The input styles are skipped above 100% model resolution and on the deferred path (Config.h DlssNrInputStyle)
+-        const bool inputStyleOff = config->DlssNrWorkingScale.value_or_default() > 1.0f + 0.005f ||
+-                                   config->DlssNrDeferredDlss.value_or_default();
++        const unsigned int major = runtime->version.major;
++        const unsigned int minor = runtime->version.minor;
++        const unsigned int patch = runtime->version.patch;
++
++        if (runtime->weightSets >= 2)
++            ImGui::TextDisabled("Your nvngx_dlssnr.dll (%u.%u.%u) has both networks.", major, minor, patch);
++        else if (runtime->weightSets == 1)
++            ImGui::TextDisabled("Your nvngx_dlssnr.dll (%u.%u.%u) has one network, the Original, so both choices look "
++                                "the same with it.",
++                                major, minor, patch);
++        else if (major > 310 || (major == 310 && minor >= 9))
++            ImGui::TextDisabled("Your nvngx_dlssnr.dll is %u.%u.%u; NVIDIA's DLLs from 310.9 on have both networks.",
++                                major, minor, patch);
++        else
++            ImGui::TextDisabled("Your nvngx_dlssnr.dll is %u.%u.%u. NVIDIA's 310.8 has only the Original network, so "
++                                "both choices look the same with it.",
++                                major, minor, patch);
++    }
 +
 +    if (config->DlssNrPass2Preset.has_value() || config->DlssNrPass3Preset.has_value())
 +        ImGui::TextDisabled("Passes 2 and 3 have weights of their own (Fine-tune > Model controls per pass). Picking "
 +                            "here sets every pass.");
 +}
-+
+ 
+-        // The base the second row is built on is derived from the settings when one of those looks is in effect, else
+-        // it is this session's last pick (Standard at start) and changes nothing until a look is clicked
+-        static DlssNrLook::Base pickedBase = DlssNrLook::Base::Standard;
+-        const auto inEffect = DlssNrLook::SecondRowInEffect(now);
 +static void RenderLookSection(Config* config, float menuResScale)
 +{
 +    ImGui::SeparatorText("Look");
-+
+ 
+-        if (inEffect)
+-            pickedBase = inEffect->base;
 +    const auto now = ReadLook(config);
 +    const DlssNrLook::Settings standard = DlssNrLook::StandardSettings();
 +    // The input styles are skipped above 100% model resolution and on the deferred path (Config.h DlssNrInputStyle)
 +    const bool inputStyleOff =
 +        config->DlssNrWorkingScale.value_or_default() > 1.0f + 0.005f || config->DlssNrDeferredDlss.value_or_default();
-+
+ 
+-        for (size_t i = 0; i < DlssNrLook::kLookCount; ++i)
+-        {
+-            const auto& look = DlssNrLook::kLooks[i];
 +    // What Faces, Painterly, Soft canvas and Structure are added on top of: derived from the settings while one of them
 +    // is in effect, else this session's last pick (Standard at start).
 +    static DlssNrLook::Base pickedBase = DlssNrLook::Base::Standard;
 +    const auto inEffect = DlssNrLook::SecondRowInEffect(now);
-+
+ 
+-            // Two rows: the everyday looks, then the ones that aim at part of the picture or restyle it
+-            if (i != 0 && i != 4)
+-                ImGui::SameLine();
 +    if (inEffect)
 +        pickedBase = inEffect->base;
 +
@@ -689,15 +745,25 @@ index cc8e2902..8130146c 100644
 +    ButtonFlow flow;
 +    const char* activeName = nullptr;
 +    const char* activeWords = nullptr;
-+
+ 
+-            const bool active = look.isModifier ? inEffect && inEffect->look == look.id
+-                                                : DlssNrLook::Matches(now, look.settings);
 +    const auto button = [&](const char* name, const char* words, bool active)
 +    {
 +        flow.Next(width);
 +        const bool pressed = PresetButton(name, active, width);
-+
+ 
+-            if (PresetButton(look.name, active, presetWidth))
+-                WriteLook(config, look.isModifier ? DlssNrLook::ComposeLook(look.id, pickedBase) : look.settings);
 +        if (ImGui::IsItemHovered())
 +            WrappedTooltip(words);
-+
+ 
+-            if (ImGui::IsItemHovered())
+-                ImGui::SetTooltip("%s%s", look.tip,
+-                                  look.experimental && inputStyleOff
+-                                      ? "\nNo effect right now: the input style is skipped above 100% model "
+-                                        "resolution and on the deferred path."
+-                                      : "");
 +        if (active)
 +        {
 +            activeName = name;
@@ -942,7 +1008,7 @@ index cc8e2902..8130146c 100644
                                 DlssNrExposureState::kMaxPaperWhiteNits, "%.0f nits", ImGuiSliderFlags_Logarithmic))
              config->DlssNrDisplayPaperWhiteNits = DlssNrExposureState::PaperWhiteNits(nits);
  
-@@ -1867,131 +2029,479 @@ static void RenderExposureSection(Config* config, float menuResScale)
+@@ -1867,105 +2089,452 @@ static void RenderExposureSection(Config* config, float menuResScale)
          if (ImGui::SmallButton("Reset##displaypaperwhite"))
              config->DlssNrDisplayPaperWhiteNits = DlssNrExposureState::kReferenceWhiteNits;
  
@@ -990,7 +1056,17 @@ index cc8e2902..8130146c 100644
  
 -        const float anchorNow = DlssNr::ExposureScan::BestValue();
 -        const bool haveAnchor = !DlssNr::ExposureScan::Anchors().empty();
--
++        for (int i = 0; i < IM_ARRAYSIZE(kSources); ++i)
++        {
++            if (kSources[i] == configured)
++                selected = i;
++        }
++
++        const std::string preview =
++            selected != 0
++                ? std::string(kSourceNames[selected])
++                : std::string(effective == Ex::kSourceGame ? "Auto (the game's exposure)" : "Auto (measured)");
+ 
 -        static const char* sourceNames[] = { "Manual paper white", "Game exposure",
 -                                             "Scanned exposure (experimental)",
 -                                             "Automatic exposure from HDR frame" };
@@ -1006,38 +1082,70 @@ index cc8e2902..8130146c 100644
 -                             : (int) std::min(configuredSource, DlssNrExposureDefault::kSourceAutomatic) + 1;
 -
 -        if (ImGui::Combo("White point source", &sourceItem, sourceItems, IM_ARRAYSIZE(sourceItems)))
-+        for (int i = 0; i < IM_ARRAYSIZE(kSources); ++i)
++        if (ImGui::BeginCombo("Source", preview.c_str()))
          {
 -            config->DlssNrWhitePointSource =
 -                sourceItem == 0 ? DlssNrExposureDefault::kSourceAuto : (uint32_t) (sourceItem - 1);
--
++            for (int i = 0; i < IM_ARRAYSIZE(kSources); ++i)
++            {
++                if (ImGui::Selectable(kSourceNames[i], i == selected))
++                    config->DlssNrWhitePointSource = kSources[i];
+ 
 -            // Nothing else to set. The scan asks the source whether it is wanted, so choosing
 -            // it here is the whole of switching it on -- there is no second flag to keep in
 -            // step, and so no way for the two to disagree.
-+            if (kSources[i] == configured)
-+                selected = i;
-         }
+-        }
++                if (i == selected)
++                    ImGui::SetItemDefaultFocus();
++            }
  
 -        const int source = (int) DlssNr::WhitePointSourceEffective(*config);
--
++            ImGui::EndCombo();
++        }
+ 
 -        HelpMarker("Where NR's brightness reference comes from.\n"
 -                   "Auto: the game's exposure when the game gives one, else Automatic exposure.\n"
 -                   "Manual: Paper white.\n"
 -                   "Game exposure: the game's own value.\n"
 -                   "Scanned exposure: read from game buffers; needs calibration.\n"
 -                   "Automatic exposure: OptiScaler measures the frame itself.");
-+        const std::string preview =
-+            selected != 0
-+                ? std::string(kSourceNames[selected])
-+                : std::string(effective == Ex::kSourceGame ? "Auto (the game's exposure)" : "Auto (measured)");
++        HelpMarker("Where the brightness comes from. Auto is right for nearly every game.\n"
++                   "The game's exposure: the value the game itself uses, handed over with its DLSS call, so NR follows "
++                   "every fade and cutscene exactly. Auto uses it whenever the game offers it.\n"
++                   "Automatic: OptiScaler measures each frame, like a camera. Auto uses it when the game offers no "
++                   "exposure.\n"
++                   "Fixed: one brightness for every scene, set by hand.\n"
++                   "Scanned: experimental; finds an exposure value among the game's buffers (set up on Fine-tune).");
++
++        if (effective == Ex::kSourceGame && haveExposure)
++            ImGui::TextColored(green, "Using the game's own exposure: NR sees the picture as bright as you do.");
++        else if (effective == Ex::kSourceGame)
++            ImGui::TextColored(amber, "This game hands over no exposure, so the fixed paper white below is used. "
++                                      "Choose Auto.");
++        else if (effective == Ex::kSourceAutomatic && haveExposure)
++            ImGui::TextDisabled("OptiScaler measures each frame. The game offers its own exposure too: Auto would use "
++                                "that.");
++        else if (effective == Ex::kSourceAutomatic)
++            ImGui::TextDisabled("This game hands over no exposure, so OptiScaler measures each frame itself.");
++        else if (effective == Ex::kSourceScan)
++            ImGui::TextColored(amber, "Scanned exposure is set up on Fine-tune > Exposure.");
++        else
++            ImGui::TextDisabled("One fixed brightness for every scene.");
  
 -        // Availability, in colour, for the option currently chosen. Two lines at most, whichever source.
 -        if (ImGui::TreeNode("Exposure readout##autoexposure"))
-+        if (ImGui::BeginCombo("Source", preview.c_str()))
++        if (effective == Ex::kSourceGame && haveExposure)
          {
 -            const float exposureSlot = StatusSlotBegin();
 -            if (source == 1)
-+            for (int i = 0; i < IM_ARRAYSIZE(kSources); ++i)
++            static constexpr const char* kScaleNames[] = { "Game's setting", "Native look" };
++            const uint32_t configuredScale = config->DlssNrGameExposureScale.value_or_default();
++            const std::string autoScale =
++                std::string("Auto (") + kScaleNames[DlssNr::GameExposureScaleEffective(*config)] + ")";
++            const char* scaleItems[] = { autoScale.c_str(), kScaleNames[0], kScaleNames[1] };
++            int scale = configuredScale == Ex::kScaleAuto ? 0 : (int) std::min(configuredScale, Ex::kScaleAsIs) + 1;
++
++            if (ImGui::Combo("Starting point", &scale, scaleItems, IM_ARRAYSIZE(scaleItems)))
              {
 -                if (!vk && ex.seenFrames == 0)
 -                    ImGui::TextDisabled("Waiting for a frame...");
@@ -1067,79 +1175,13 @@ index cc8e2902..8130146c 100644
 -                }
 -                else
 -                    ImGui::TextDisabled("Reading exposure...");
-+                if (ImGui::Selectable(kSourceNames[i], i == selected))
-+                    config->DlssNrWhitePointSource = kSources[i];
-+
-+                if (i == selected)
-+                    ImGui::SetItemDefaultFocus();
-             }
--            else if (source == 3)
-+
-+            ImGui::EndCombo();
-+        }
-+
-+        HelpMarker("Where the brightness comes from. Auto is right for nearly every game.\n"
-+                   "The game's exposure: the value the game itself uses, handed over with its DLSS call, so NR follows "
-+                   "every fade and cutscene exactly. Auto uses it whenever the game offers it.\n"
-+                   "Automatic: OptiScaler measures each frame, like a camera. Auto uses it when the game offers no "
-+                   "exposure.\n"
-+                   "Fixed: one brightness for every scene, set by hand.\n"
-+                   "Scanned: experimental; finds an exposure value among the game's buffers (set up on Fine-tune).");
-+
-+        if (effective == Ex::kSourceGame && haveExposure)
-+            ImGui::TextColored(green, "Using the game's own exposure: NR sees the picture as bright as you do.");
-+        else if (effective == Ex::kSourceGame)
-+            ImGui::TextColored(amber, "This game hands over no exposure, so the fixed paper white below is used. "
-+                                      "Choose Auto.");
-+        else if (effective == Ex::kSourceAutomatic && haveExposure)
-+            ImGui::TextDisabled("OptiScaler measures each frame. The game offers its own exposure too: Auto would use "
-+                                "that.");
-+        else if (effective == Ex::kSourceAutomatic)
-+            ImGui::TextDisabled("This game hands over no exposure, so OptiScaler measures each frame itself.");
-+        else if (effective == Ex::kSourceScan)
-+            ImGui::TextColored(amber, "Scanned exposure is set up on Fine-tune > Exposure.");
-+        else
-+            ImGui::TextDisabled("One fixed brightness for every scene.");
-+
-+        if (effective == Ex::kSourceGame && haveExposure)
-+        {
-+            static constexpr const char* kScaleNames[] = { "Game's setting", "Native look" };
-+            const uint32_t configuredScale = config->DlssNrGameExposureScale.value_or_default();
-+            const std::string autoScale =
-+                std::string("Auto (") + kScaleNames[DlssNr::GameExposureScaleEffective(*config)] + ")";
-+            const char* scaleItems[] = { autoScale.c_str(), kScaleNames[0], kScaleNames[1] };
-+            int scale = configuredScale == Ex::kScaleAuto ? 0 : (int) std::min(configuredScale, Ex::kScaleAsIs) + 1;
-+
-+            if (ImGui::Combo("Starting point", &scale, scaleItems, IM_ARRAYSIZE(scaleItems)))
-             {
--                const auto autoEx = vk ? DlssNr::AutoExposureStatusVk() : DlssNr::AutoExposureStatus();
 +                const uint32_t before = DlssNr::GameExposureScaleEffective(*config);
 +                config->DlssNrGameExposureScale = scale == 0 ? Ex::kScaleAuto : (uint32_t) (scale - 1);
- 
--                if (autoEx.exposure > 1e-8f)
--                {
--                    const float baseWhitePoint = autoEx.preExposure / autoEx.exposure;
--                    const auto trimAnchors =
--                        DlssNrTrim::Parse(config->DlssNrAutoExposureTrimAnchors.value_or_default());
--                    const float trim = DlssNrTrim::TrimForKey(
--                        baseWhitePoint, DlssNr::AutoTrimEffective(*config), trimAnchors, false);
--                    // Middle-grey metering, mode 13 in dlssnr.hlsl: exposure = 0.18 / (0.82 * average scene brightness).
--                    ImGui::TextColored(ImVec4(0.45f, 0.8f, 0.45f, 1.0f),
--                                       "Scene brightness %.3f  ->  model white at %.2f",
--                                       0.18f / (0.82f * autoEx.exposure), baseWhitePoint * trim);
--                    HelpMarker("Measured on the frame before NR. Model white: the brightness treated as full white.");
--                    ImGui::TextDisabled("Automatic exposure %.4f", autoEx.exposure);
--                }
--                else
--                    ImGui::TextDisabled("Calculating automatic exposure...");
++
 +                // A Brightness set on one starting point means something else on the other, so it starts again at 0
 +                if (DlssNr::GameExposureScaleEffective(*config) != before)
 +                    config->DlssNrWhitePointTrim = DlssNrExposureCalibrate::kGameExposureNeutralTrim;
-             }
--            else if (source == 2 && vk)
--            {
--                // The scan watches D3D12 resource creation only; the Vulkan path resolves source 2 to Paper white.
--                ImGui::TextColored(ImVec4(0.9f, 0.6f, 0.25f, 1.0f),
++            }
 +
 +            HelpMarker("What 0 EV of Brightness means.\n"
 +                       "Game's setting: as bright as the game shows its own picture. Right for most games.\n"
@@ -1503,37 +1545,24 @@ index cc8e2902..8130146c 100644
 +                }
 +                else
 +                    ImGui::TextDisabled("Reading exposure...");
-+            }
-+            else if (source == 3)
-+            {
-+                const auto autoEx = vk ? DlssNr::AutoExposureStatusVk() : DlssNr::AutoExposureStatus();
-+
-+                if (autoEx.exposure > 1e-8f)
-+                {
-+                    const float baseWhitePoint = autoEx.preExposure / autoEx.exposure;
-+                    const auto trimAnchors =
-+                        DlssNrTrim::Parse(config->DlssNrAutoExposureTrimAnchors.value_or_default());
+             }
+             else if (source == 3)
+             {
+@@ -1976,9 +2545,10 @@ static void RenderExposureSection(Config* config, float menuResScale)
+                     const float baseWhitePoint = autoEx.preExposure / autoEx.exposure;
+                     const auto trimAnchors =
+                         DlssNrTrim::Parse(config->DlssNrAutoExposureTrimAnchors.value_or_default());
+-                    const float trim = DlssNrTrim::TrimForKey(
+-                        baseWhitePoint, DlssNr::AutoTrimEffective(*config), trimAnchors, false);
+-                    // Middle-grey metering, mode 13 in dlssnr.hlsl: exposure = 0.18 / (0.82 * average scene brightness).
 +                    const float trim =
 +                        DlssNrTrim::TrimForKey(baseWhitePoint, DlssNr::AutoTrimEffective(*config), trimAnchors, false);
 +                    // Middle-grey metering, mode 13 in dlssnr.hlsl: exposure = 0.18 / (0.82 * average scene
 +                    // brightness).
-+                    ImGui::TextColored(ImVec4(0.45f, 0.8f, 0.45f, 1.0f),
-+                                       "Scene brightness %.3f  ->  model white at %.2f",
-+                                       0.18f / (0.82f * autoEx.exposure), baseWhitePoint * trim);
-+                    HelpMarker("Measured on the frame before NR. Model white: the brightness treated as full white.");
-+                    ImGui::TextDisabled("Automatic exposure %.4f", autoEx.exposure);
-+                }
-+                else
-+                    ImGui::TextDisabled("Calculating automatic exposure...");
-+            }
-+            else if (source == 2 && vk)
-+            {
-+                // The scan watches D3D12 resource creation only; the Vulkan path resolves source 2 to Paper white.
-+                ImGui::TextColored(ImVec4(0.9f, 0.6f, 0.25f, 1.0f),
-                                    "Scanned exposure is DirectX 12 only. Using Paper white.");
-             }
-             else if (source == 2)
-@@ -2028,11 +2538,6 @@ static void RenderExposureSection(Config* config, float menuResScale)
+                     ImGui::TextColored(ImVec4(0.45f, 0.8f, 0.45f, 1.0f),
+                                        "Scene brightness %.3f  ->  model white at %.2f",
+                                        0.18f / (0.82f * autoEx.exposure), baseWhitePoint * trim);
+@@ -2028,11 +2598,6 @@ static void RenderExposureSection(Config* config, float menuResScale)
          }
      }
  
@@ -1545,7 +1574,7 @@ index cc8e2902..8130146c 100644
      // A measured suggestion for paper white used to sit here and has been withdrawn.
      //
      // It took the 90th percentile of per-tile peak luminance from the untouched frame, which is a
-@@ -2154,69 +2659,8 @@ static void RenderExposureSection(Config* config, float menuResScale)
+@@ -2154,69 +2719,8 @@ static void RenderExposureSection(Config* config, float menuResScale)
                         "saves it and resets this to 1.");
          }
      }
@@ -1615,7 +1644,7 @@ index cc8e2902..8130146c 100644
          // Following the game's own exposure (DlssNr_FollowGame.h): on by default for a known unexposed game
          // (DlssNr_GameDefaults.h). Vulkan follows from the host value, a few frames behind the game.
          {
-@@ -2309,7 +2753,7 @@ static void RenderExposureSection(Config* config, float menuResScale)
+@@ -2309,7 +2813,7 @@ static void RenderExposureSection(Config* config, float menuResScale)
                     "Average: the whole frame, bright areas counted less.\n"
                     "Percentile: the middle of the brightness range, as Unreal and Unity do; lamps and sky don't pull "
                     "it up.\n"
@@ -1624,7 +1653,7 @@ index cc8e2902..8130146c 100644
  
          if (meter == (int) DlssNrExposureMeter::kPercentile)
          {
-@@ -2357,27 +2801,6 @@ static void RenderExposureSection(Config* config, float menuResScale)
+@@ -2357,27 +2861,6 @@ static void RenderExposureSection(Config* config, float menuResScale)
          HelpMarker("The same for the scene getting darker. Slower by default, so a brief flash doesn't darken the "
                     "picture for long.");
      }
@@ -1652,7 +1681,7 @@ index cc8e2902..8130146c 100644
      ImGui::EndDisabled();
  
      // Highlight guard, directly under the white point / trim -- it bounds the model's edit and
-@@ -2421,11 +2844,14 @@ static void RenderExposureSection(Config* config, float menuResScale)
+@@ -2421,11 +2904,14 @@ static void RenderExposureSection(Config* config, float menuResScale)
              // cannot light up.
              bool meter = config->DlssNrScanMeter.value_or_default();
  
@@ -1671,30 +1700,39 @@ index cc8e2902..8130146c 100644
  
          // Shown when the scan is actually running, whichever way it got switched on.
          if (DlssNr::ExposureScan::Scanning())
-@@ -2595,289 +3021,7 @@ static void RenderExposureSection(Config* config, float menuResScale)
+@@ -2595,303 +3081,21 @@ static void RenderExposureSection(Config* config, float menuResScale)
          }
      }
  
 -
 -    }
--}
--
++    ImGui::PopItemWidth();
+ }
+ 
 -// NR Options.
 -static void RenderOptionsPage(Config* config, float menuResScale, const NrCommon& nr)
--{
++// A 3D LUT (.cube) graded onto the NR input image before the model sees it (dlssnr-lut-apply epic,
++// Story 4). Scanned from the LUTs folder inside the OptiScaler folder; LutFile also accepts any path typed
++// into the ini directly, so the combo's preview shows the current selection's filename even when it
++// is not one of the scanned entries.
++static void RenderLutSection(Config* config)
+ {
 -    const bool enabled = nr.enabled;
 -    bool finishedPicture = nr.finishedPicture;
 -    // Edited by the "Lift model pass limit" checkbox below.
 -    bool unlockPasses = config->DlssNrUnlockPasses.value_or_default();
 -
 -    ImGui::SeparatorText("NR Options");
--
++    static std::vector<std::filesystem::path> lutFiles = ScanLutFolder();
+ 
 -    bool beforeSr = config->DlssNrRunBeforeSr.value_or_default() ||
 -                    (finishedPicture && config->DlssNrDeferredDlss.value_or_default());
 -    const auto activeFeature = State::Instance().currentFeature;
 -    const bool rayReconstruction = activeFeature && activeFeature->GetUpscalerType() == Upscaler::DLSSD;
 -    const bool deferredActive = !finishedPicture && config->DlssNrDeferredDlss.value_or_default() && !rayReconstruction;
--
++    const std::string current = config->DlssNrLutFile.value_or_default();
++    const std::string preview = current.empty() ? "(none)" : std::filesystem::path(current).filename().string();
+ 
 -    // A single exclusive choice, not two independent checkboxes: "before SR" used to be one
 -    // checkbox whose own label AND meaning silently changed depending on finishedPicture's
 -    // state, and "neither checked" was an unlabeled third placement (after SR, not on the
@@ -1958,11 +1996,25 @@ index cc8e2902..8130146c 100644
 -    HelpMarker("Allow up to 30 passes instead of 3. More passes use more GPU time and VRAM; high values may crash the game.");
 -
 -    ImGui::Spacing();
-+    ImGui::PopItemWidth();
- }
- 
- // A 3D LUT (.cube) graded onto the NR input image before the model sees it (dlssnr-lut-apply epic,
-@@ -3157,110 +3301,305 @@ static void RenderEdgeCompression(Config* config, float menuResScale, const NrCo
+-}
+-
+-// A 3D LUT (.cube) graded onto the NR input image before the model sees it (dlssnr-lut-apply epic,
+-// Story 4). Scanned from the LUTs folder inside the OptiScaler folder; LutFile also accepts any path typed
+-// into the ini directly, so the combo's preview shows the current selection's filename even when it
+-// is not one of the scanned entries.
+-static void RenderLutSection(Config* config)
+-{
+-    static std::vector<std::filesystem::path> lutFiles = ScanLutFolder();
+-
+-    const std::string current = config->DlssNrLutFile.value_or_default();
+-    const std::string preview = current.empty() ? "(none)" : std::filesystem::path(current).filename().string();
+-
+-    if (ImGui::BeginCombo("LUT", preview.c_str()))
++    if (ImGui::BeginCombo("LUT", preview.c_str()))
+     {
+         const bool noneSelected = current.empty();
+         if (ImGui::Selectable("(none)", noneSelected))
+@@ -3157,110 +3361,305 @@ static void RenderEdgeCompression(Config* config, float menuResScale, const NrCo
      }
  }
  
@@ -1973,7 +2025,10 @@ index cc8e2902..8130146c 100644
 +static float AppliedModelScale(Config* config, const NrCommon& nr)
  {
 -    ImGui::PushItemWidth(220.0f * menuResScale);
--
++    const Placement placement = ReadPlacement(config, nr);
++    const bool autoActive =
++        config->DlssNrModelResolutionAuto.value_or_default() && (!placement.beforeSr || placement.rayReconstruction);
+ 
 -    // Same definitions as at the top of NR Options.
 -    const bool finishedPicture = nr.finishedPicture;
 -    const bool beforeSr = config->DlssNrRunBeforeSr.value_or_default() ||
@@ -1993,10 +2048,7 @@ index cc8e2902..8130146c 100644
 -    // down the scratch textures and rebuilds the model. Writing it on each pixel of a drag meant
 -    // dozens of rebuilds in a second, which is felt as the whole frame hitching. The slider still
 -    // reads live; only the commit waits.
-+    const Placement placement = ReadPlacement(config, nr);
-+    const bool autoActive =
-+        config->DlssNrModelResolutionAuto.value_or_default() && (!placement.beforeSr || placement.rayReconstruction);
- 
+-
 -    bool resolutionAuto = config->DlssNrModelResolutionAuto.value_or_default();
 -    const bool autoActive = resolutionAuto && (!beforeSr || rayReconstruction);
 +    return autoActive ? DlssNr::CurrentModelResolutionPercent() / 100.0f
@@ -2062,6 +2114,10 @@ index cc8e2902..8130146c 100644
 -        // The saved layout is not rewritten for a Model resolution: Strong at 30% would become a permanent Custom. When the
 -        // NR picture would be too small the status line says so and compression is not applied (Constrain is for edits to
 -        // the layout's own sliders).
+-    }
+-
+-    HelpMarker("Size NR works at, relative to its input. Lower: faster, less fine detail. Above 100%: costs more. "
+-               "The game's resolution is unchanged.");
 +        ImGui::TextWrapped("Defaults: inherit Pass 1; Local tone = 0. Reset restores these defaults.");
 +        InheritedProfileCombo("Style", &config->DlssNrPass2Style, inheritedStyles, IM_ARRAYSIZE(inheritedStyles));
 +        DeferredSlider("Intensity", &config->DlssNrPass2Intensity, 0.0f, 2.0f,
@@ -2079,12 +2135,12 @@ index cc8e2902..8130146c 100644
 +        if (ImGui::SmallButton("Reset##mask"))
 +            config->DlssNrPass2AutoMask = std::optional<bool> {};
 +        ImGui::TreePop();
-     }
++    }
  
--    HelpMarker("Size NR works at, relative to its input. Lower: faster, less fine detail. Above 100%: costs more. "
--               "The game's resolution is unchanged.");
 +    if (ImGui::TreeNodeEx("Pass 3", ImGuiTreeNodeFlags_DefaultOpen))
-+    {
+     {
+-        unsigned int modelWidth = 0;
+-        unsigned int modelHeight = 0;
 +        ImGui::TextWrapped("Defaults: inherit Pass 1; Local tone = 0. Reset restores these defaults.");
 +        InheritedProfileCombo("Style", &config->DlssNrPass3Style, inheritedStyles, IM_ARRAYSIZE(inheritedStyles));
 +        DeferredSlider("Intensity", &config->DlssNrPass3Intensity, 0.0f, 2.0f,
@@ -2104,11 +2160,14 @@ index cc8e2902..8130146c 100644
 +        ImGui::TreePop();
 +    }
  
+-        // Native Vulkan keeps its own; the network pools 2x2 in the same model on both.
+-        if (nr.vulkan)
+-            DlssNr::CurrentModelSizeVk(modelWidth, modelHeight);
+-        else
+-            DlssNr::CurrentModelSize(modelWidth, modelHeight);
 +    const unsigned int visiblePasses = std::clamp(config->DlssNrPasses.value_or_default(), 1u, passLimit);
 +    for (unsigned int pass = 3; pass < visiblePasses; ++pass)
-     {
--        unsigned int modelWidth = 0;
--        unsigned int modelHeight = 0;
++    {
 +        auto& settings = config->DlssNrExtraPasses[pass - 3];
 +        if (!ImGui::TreeNode(std::format("Pass {}", pass + 1).c_str()))
 +            continue;
@@ -2130,11 +2189,9 @@ index cc8e2902..8130146c 100644
 +        ImGui::TreePop();
 +    }
  
--        // Native Vulkan keeps its own; the network pools 2x2 in the same model on both.
--        if (nr.vulkan)
--            DlssNr::CurrentModelSizeVk(modelWidth, modelHeight);
--        else
--            DlssNr::CurrentModelSize(modelWidth, modelHeight);
+-        if (modelWidth != 0 && modelHeight != 0)
+-            ImGui::TextDisabled("Model input %ux%u; its main network runs at %ux%u.", modelWidth, modelHeight,
+-                                (modelWidth + 1) / 2, (modelHeight + 1) / 2);
 +    // Weights ([DlssNr] Preset) per pass; the Main page sets one for every pass.
 +    if (ImGui::TreeNode("Weights per pass"))
 +    {
@@ -2155,10 +2212,7 @@ index cc8e2902..8130146c 100644
 +    }
 +    ImGui::TextWrapped(
 +        "Pass settings apply to SR and RR on DX12 and native Vulkan. The driver-proxy backend supports one pass.");
- 
--        if (modelWidth != 0 && modelHeight != 0)
--            ImGui::TextDisabled("Model input %ux%u; its main network runs at %ux%u.", modelWidth, modelHeight,
--                                (modelWidth + 1) / 2, (modelHeight + 1) / 2);
++
 +    {
 +        // Disabled rather than hidden at one pass: the control exists, there is just no boundary between passes to
 +        // damp.
@@ -2246,7 +2300,8 @@ index cc8e2902..8130146c 100644
 +            ImGui::TreePop();
 +        }
 +    }
-+
+ 
+-        HelpMarker("Filter used to reduce NR output when Model resolution exceeds 100%.\nSharper filters may introduce ringing around edges.");
 +    // Experimental. 0 off (soft knee), 1 Reversible curve + our composition, 2 Reversible curve +
 +    // pure-inverse replace, 3 Balanced+composed, 4 Balanced+replace (identity midtones + unclipped
 +    // highlights), 5 HLG+composed, 6 PQ+composed (BT.2100 / ST 2084, white per BT.2408), 7 Linear+composed (what
@@ -2273,8 +2328,8 @@ index cc8e2902..8130146c 100644
 +                ImGui::SetItemDefaultFocus();
 +        }
 +        ImGui::EndCombo();
-+    }
-+
+     }
+ 
 +    HelpMarker("How NR's brightness range is mapped, and how its result is blended back.\n"
 +               "Soft knee / Balanced: compress highlights, keep midtones.\n"
 +               "Reversible curve: an exactly reversible mapping.\n"
@@ -2297,8 +2352,7 @@ index cc8e2902..8130146c 100644
 +        HelpMarker("Sharpens fine edges using the original frame. Higher: sharper. 0: off. Only below 100% Model "
 +                   "resolution; most useful with Replace.");
 +    }
- 
--        HelpMarker("Filter used to reduce NR output when Model resolution exceeds 100%.\nSharper filters may introduce ringing around edges.");
++
 +    if (ImGui::TreeNode("Skin and environment (final edit)"))
 +    {
 +        ImGui::TextWrapped("Select skin by colour and adjust the final NR effect separately for skin and scenery. "
@@ -2334,8 +2388,8 @@ index cc8e2902..8130146c 100644
 +            config->DlssNrShowSkinMask = preview;
 +        ImGui::EndDisabled();
 +        ImGui::TreePop();
-     }
- 
++    }
++
 +    ImGui::PopItemWidth();
 +}
 +
@@ -2347,7 +2401,7 @@ index cc8e2902..8130146c 100644
      // Experimental input style (Config.h DlssNrInputStyle): restyle the picture the model is shown.
      {
          static const char* styleNames[] = { "Off", "Watercolour", "Structure hint", "Smooth canvas" };
-@@ -3297,36 +3636,24 @@ static void RenderInputPage(Config* config, float menuResScale, const NrCommon&
+@@ -3297,36 +3696,24 @@ static void RenderInputPage(Config* config, float menuResScale, const NrCommon&
          }
      }
  
@@ -2393,7 +2447,7 @@ index cc8e2902..8130146c 100644
      // Meaningful only when the model runs BELOW the frame's size. At 100% -- and above, where
      // supersampling composites its down-legged answer at native -- the residual collapses to the
      // model's own picture and the two modes are identical, so the control says so by going grey.
-@@ -3367,254 +3694,235 @@ static void RenderOutputPage(Config* config, float menuResScale, const NrCommon&
+@@ -3367,254 +3754,235 @@ static void RenderOutputPage(Config* config, float menuResScale, const NrCommon&
                     "SGSR1: edge-aware, sharper.");
      }
  
@@ -2850,7 +2904,7 @@ index cc8e2902..8130146c 100644
  }
  
  // Compare and Debug.
-@@ -3624,6 +3932,14 @@ static void RenderDebugPage(Config* config, float menuResScale)
+@@ -3624,6 +3992,14 @@ static void RenderDebugPage(Config* config, float menuResScale)
  
      ImGui::SeparatorText("Compare");
  
@@ -2865,7 +2919,7 @@ index cc8e2902..8130146c 100644
      // Freeze the frame the model works on, so a setting change re-renders it in place -- the only
      // clean way to A/B our own settings (a moving scene confounds every other comparison). See
      // design/frame-hold.md.
-@@ -3890,31 +4206,22 @@ void RenderMenu(Config* config, float menuResScale, MenuPages::Page page)
+@@ -3890,31 +4266,22 @@ void RenderMenu(Config* config, float menuResScale, MenuPages::Page page)
      RenderEnableToggle(config);
      const NrCommon nr = ReadNrCommon(config);
  
