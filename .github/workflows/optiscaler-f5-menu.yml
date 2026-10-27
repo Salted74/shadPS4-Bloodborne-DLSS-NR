@@ -1,0 +1,79 @@
+# Builds OptiScaler F5 0.1.31 (janblade/OptiScaler-F5-DLSSNR-Multipass, tag v0.1.31) with the patches in this branch,
+# and publishes OptiScaler.dll and the build log to the optiscaler-f5-menu-build branch.
+name: OptiScaler F5 menu build
+
+on:
+  push:
+    branches: [optiscaler-f5-menu]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: optiscaler-f5-menu
+  cancel-in-progress: true
+
+env:
+  F5_REPO: https://github.com/janblade/OptiScaler-F5-DLSSNR-Multipass.git
+  F5_COMMIT: 5d5cdccdbe671ab222d5e29fc7663e5115bc5d9b
+
+jobs:
+  build:
+    runs-on: windows-2025
+    steps:
+    - name: Keep line endings as stored
+      run: git config --global core.autocrlf false
+
+    - uses: actions/checkout@v6
+      with:
+        path: branch
+
+    - name: Get OptiScaler F5 0.1.31 and apply the patches
+      shell: bash
+      run: |
+        git init -q f5
+        cd f5
+        git remote add origin "$F5_REPO"
+        git fetch -q --depth 1 origin "$F5_COMMIT"
+        git checkout -q FETCH_HEAD
+        git submodule update -q --init --depth 1
+        git -c user.name=ci -c user.email=ci@localhost am -q ../branch/patches/*.patch
+        git log --oneline -3
+
+    - uses: microsoft/setup-msbuild@v2
+
+    - name: Build
+      id: build
+      working-directory: f5
+      shell: pwsh
+      run: |
+        msbuild OptiScaler.sln /m /p:Configuration=Release /p:Platform=x64 /v:minimal "/flp:logfile=build.log;verbosity=minimal"
+        "exitcode=$LASTEXITCODE" >> $env:GITHUB_OUTPUT
+        exit 0
+
+    - name: Publish to the optiscaler-f5-menu-build branch
+      if: always()
+      shell: pwsh
+      env:
+        TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        New-Item -ItemType Directory -Force out | Out-Null
+        if (Test-Path f5\build.log) {
+          Copy-Item f5\build.log out\
+          Select-String -Path f5\build.log -Pattern ': (fatal )?error ' | Select-Object -First 100 |
+            ForEach-Object { $_.Line } | Set-Content out\errors.txt
+        }
+        if (Test-Path f5\x64\Release\a\OptiScaler.dll) {
+          Copy-Item f5\x64\Release\a\OptiScaler.dll out\
+          (Get-FileHash out\OptiScaler.dll -Algorithm SHA256).Hash | Set-Content out\OptiScaler.dll.sha256
+        }
+        "source ${{ github.sha }}; msbuild exit code: ${{ steps.build.outputs.exitcode }}" | Set-Content out\RESULT.txt
+        git -C out init -q -b optiscaler-f5-menu-build
+        git -C out add -A
+        git -C out -c user.name=github-actions -c user.email=github-actions@users.noreply.github.com commit -q -m "Build of ${{ github.sha }}"
+        git -C out push -q --force "https://x-access-token:$env:TOKEN@github.com/${{ github.repository }}.git" HEAD:optiscaler-f5-menu-build
+
+    - name: Fail if the build failed
+      if: steps.build.outputs.exitcode != '0'
+      run: exit 1
