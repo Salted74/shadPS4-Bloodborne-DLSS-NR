@@ -1,0 +1,610 @@
+
+  dlssnr_forwarder.cpp
+  pch.cpp
+     Creating library D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\x64\Release\a\nvngx.dll_dlssnr.lib and object D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\x64\Release\a\nvngx.dll_dlssnr.exp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 560 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  dlssnr_forwarder.vcxproj -> D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\x64\Release\a\nvngx.dll_dlssnr.dll
+  Nvngx_Combo.cpp
+  FSR4Upgrade.cpp
+  GpuTime_Dx11.cpp
+  GpuTime_Dx12.cpp
+  Amdxc64_Hooks.cpp
+  DLSSG_Dx12.cpp
+  Kcd2Hdr.cpp
+  MfgUnlock.cpp
+  AmpereMfgLoader.cpp
+  FSRFG_Dx12.cpp
+  IFGFeature.cpp
+  IFGFeature_Dx12.cpp
+  Nvngx_FG.cpp
+  FSR4ModelSelection.cpp
+  D3D12_Hooks.cpp
+  DxgiFactory_Hooks.cpp
+  DxvkOutputs.cpp
+  DxgiFactory_WrappedCalls.cpp
+  Dxgi_Hooks.cpp
+  FG_Hooks.cpp
+  Kernel_Hooks.cpp
+  LibraryLoad_Hooks.cpp
+  VulkanwDx12_Hooks.cpp
+  Xell_Hooks.cpp
+  Streamline_Inputs_Sl1_Dx12.cpp
+  device_info.cpp
+  Upscaler_Inputs_Dx11wDx12.cpp
+  input_common.cpp
+  input_reflex.cpp
+  ll_reflex_vk.cpp
+  ll_reflex_nvapi_vk.cpp
+  ll_reflex.cpp
+  ll_fps_limiter.cpp
+  input_antilag_vk.cpp
+  input_reflex_vk.cpp
+  input_xell.cpp
+  input_antilag2.cpp
+  Magnifier_Dx11.cpp
+  input_system.cpp
+  input_system_cursor.cpp
+  input_system_detours.cpp
+  input_system_directinput.cpp
+  input_system_gameinput.cpp
+  input_system_hid.cpp
+  input_system_messages.cpp
+  input_system_raw.cpp
+  input_system_window.cpp
+  input_system_windows_hooks.cpp
+  input_system_xinput.cpp
+  IdentifyGpu.cpp
+  REFrameworkCompat.cpp
+  FSR2_Dx11.cpp
+  FSR2_Vk.cpp
+  XeSS_Dx11.cpp
+  ll_util.cpp
+  log.cpp
+  low_latency.cpp
+  low_latency_d3d.cpp
+  ll_antilag2.cpp
+  ll_antilag_vk.cpp
+  ll_latencyflex.cpp
+  ll_xell.cpp
+  nvapi_calls.cpp
+  Nvngx_FFX.cpp
+  Nvngx_Nukems.cpp
+  Nvngx_Arturs.cpp
+  NVNGX_Parameter.cpp
+  Nvngx_DllProxy.cpp
+  OptiTypes.cpp
+  DI_Dx12.cpp
+  HCC_Dx12.cpp
+  HudCopy_Dx12.cpp
+  DT_Vk.cpp
+  Magnifier_Common.cpp
+  Magnifier_Dx12.cpp
+  Magnifier_Vk.cpp
+  OS_Vk.cpp
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\shaders\magnifier\Magnifier_Common.cpp(40,51): warning C4244: '=': conversion from 'LONG' to 'float', possible loss of data [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/shaders/magnifier/Magnifier_Common.cpp')
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\shaders\magnifier\Magnifier_Common.cpp(41,51): warning C4244: '=': conversion from 'LONG' to 'float', possible loss of data [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/shaders/magnifier/Magnifier_Common.cpp')
+  
+  RCAS_Common.cpp
+  RCAS_Vk.cpp
+  Shader_Common.cpp
+  RUI_Dx12.cpp
+  RC_Vk.cpp
+  Shader_Dx12.cpp
+  Shader_Vk.cpp
+  SkipSpoof.cpp
+  Shader_Dx11.cpp
+  Dxgi_Spoofing.cpp
+  User32_Spoofing.cpp
+  Vulkan_Spoofing.cpp
+  input_uell.cpp
+  FSR2Feature_VkOnDx12_212.cpp
+  FFXFeature_VkOn12.cpp
+  FSR31Feature.cpp
+  IFeature_Vk.cpp
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\fsr2_212\FSR2Feature_Dx12_212.h(8,7): warning C4250: 'FSR2FeatureDx12_212': inherits 'IFeature_Dx12::IFeature_Dx12::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/fsr2_212/FSR2Feature_VkOnDx12_212.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(70,27):
+      see declaration of 'IFeature_Dx12::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\fsr2_212\FSR2Feature_Dx12_212.h(8,7): warning C4250: 'FSR2FeatureDx12_212': inherits 'IFeature_Dx12::IFeature_Dx12::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/fsr2_212/FSR2Feature_VkOnDx12_212.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(71,10):
+      see declaration of 'IFeature_Dx12::ReadDetailedGpuTimes'
+  
+  IFeature_VkwDx12.cpp
+  UpscalerTime_Vk.cpp
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\ffx\FFXFeature_Dx12.h(8,7): warning C4250: 'FFXFeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/ffx/FFXFeature_VkOn12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(70,27):
+      see declaration of 'IFeature_Dx12::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\ffx\FFXFeature_Dx12.h(8,7): warning C4250: 'FFXFeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/ffx/FFXFeature_VkOn12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(71,10):
+      see declaration of 'IFeature_Dx12::ReadDetailedGpuTimes'
+  
+  dx11_with_dx12.cpp
+  with_dx12.cpp
+  dx11_with_dx12_sc.cpp
+  wrapped_factory.cpp
+  FSR3_Dx12_FG.cpp
+  Streamline_Inputs_Dx12.cpp
+  XeFG_Dx12.cpp
+  Streamline_Hooks.cpp
+  Hudfix_Dx12.cpp
+  FfxApiExe_Dx12.cpp
+  FfxApi_Dx12_FG.cpp
+  FfxApi_Vk.cpp
+  Upscaler_Inputs_Dx12.cpp
+  XeSS_Base.cpp
+  XeSS_Common.cpp
+  XeSS_Dbg.cpp
+  XeSS_Vulkan.cpp
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\hooks\Streamline_Hooks.cpp(407,63): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/hooks/Streamline_Hooks.cpp')
+  
+  FrameLimit.cpp
+  fakenvapi.cpp
+  NvApiHooks.cpp
+  NvApiTypes.cpp
+  Reflex_Hooks.cpp
+  NativeDriverDx12.cpp
+  NativeDriverDx11.cpp
+  Dx12FrameSource.cpp
+  Dx11FrameSource.cpp
+  VkFrameSource.cpp
+  VkPresentBridge.cpp
+  NativeDriverVk.cpp
+  GenericDepth_Vk.cpp
+  VirtualUpscalerDriver.cpp
+  NativeDriver.cpp
+  NativeLowLatency.cpp
+  GenericDepth_Dx12.cpp
+  GenericDepth_Dx11.cpp
+  ResTrack_dx12.cpp
+  HC_Dx12.cpp
+  RF_Dx12.cpp
+  DS_Dx12.cpp
+  DT_Dx11.cpp
+  DLSSDFeature.cpp
+  DLSSDFeature_Dx11.cpp
+  DLSSDFeature_Dx12.cpp
+  DLSSDFeature_Vk.cpp
+  DLSSFeature.cpp
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\dlssd\DLSSDFeature_Dx11.h(6,7): warning C4250: 'DLSSDFeatureDx11': inherits 'IFeature_Dx11::IFeature_Dx11::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/dlssd/DLSSDFeature_Dx11.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx11.h(47,27):
+      see declaration of 'IFeature_Dx11::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\dlssd\DLSSDFeature_Dx11.h(6,7): warning C4250: 'DLSSDFeatureDx11': inherits 'IFeature_Dx11::IFeature_Dx11::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/dlssd/DLSSDFeature_Dx11.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx11.h(48,10):
+      see declaration of 'IFeature_Dx11::ReadDetailedGpuTimes'
+  
+  DLSSFeature_Dx11.cpp
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\dlssd\DLSSDFeature_Dx12.h(7,7): warning C4250: 'DLSSDFeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/dlssd/DLSSDFeature_Dx12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(70,27):
+      see declaration of 'IFeature_Dx12::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\dlssd\DLSSDFeature_Dx12.h(7,7): warning C4250: 'DLSSDFeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/dlssd/DLSSDFeature_Dx12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(71,10):
+      see declaration of 'IFeature_Dx12::ReadDetailedGpuTimes'
+  
+  DLSSFeature_Dx11On12.cpp
+  DLSSFeature_VkOn12.cpp
+  DLSSFeature_Dx12.cpp
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\dlss\DLSSFeature_Dx11.h(6,7): warning C4250: 'DLSSFeatureDx11': inherits 'IFeature_Dx11::IFeature_Dx11::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/dlss/DLSSFeature_Dx11.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx11.h(47,27):
+      see declaration of 'IFeature_Dx11::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\dlss\DLSSFeature_Dx11.h(6,7): warning C4250: 'DLSSFeatureDx11': inherits 'IFeature_Dx11::IFeature_Dx11::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/dlss/DLSSFeature_Dx11.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx11.h(48,10):
+      see declaration of 'IFeature_Dx11::ReadDetailedGpuTimes'
+  
+  DLSSFeature_Vk.cpp
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\dlss\DLSSFeature_Dx12.h(7,7): warning C4250: 'DLSSFeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/dlss/DLSSFeature_Dx11On12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(70,27):
+      see declaration of 'IFeature_Dx12::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\dlss\DLSSFeature_Dx12.h(7,7): warning C4250: 'DLSSFeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/dlss/DLSSFeature_Dx11On12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(71,10):
+      see declaration of 'IFeature_Dx12::ReadDetailedGpuTimes'
+  
+  FeatureProvider_Dx11.cpp
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\dlss\DLSSFeature_Dx12.h(7,7): warning C4250: 'DLSSFeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/dlss/DLSSFeature_VkOn12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(70,27):
+      see declaration of 'IFeature_Dx12::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\dlss\DLSSFeature_Dx12.h(7,7): warning C4250: 'DLSSFeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/dlss/DLSSFeature_VkOn12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(71,10):
+      see declaration of 'IFeature_Dx12::ReadDetailedGpuTimes'
+  
+  FeatureProvider_Dx12.cpp
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\dlss\DLSSFeature_Dx12.h(7,7): warning C4250: 'DLSSFeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/dlss/DLSSFeature_Dx12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(70,27):
+      see declaration of 'IFeature_Dx12::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\dlss\DLSSFeature_Dx12.h(7,7): warning C4250: 'DLSSFeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/dlss/DLSSFeature_Dx12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(71,10):
+      see declaration of 'IFeature_Dx12::ReadDetailedGpuTimes'
+  
+  FeatureProvider_Vk.cpp
+  FSR2Feature_212.cpp
+  FSR2Feature_Dx11On12_212.cpp
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\dlss\DLSSFeature_Dx11.h(6,7): warning C4250: 'DLSSFeatureDx11': inherits 'IFeature_Dx11::IFeature_Dx11::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/FeatureProvider_Dx11.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx11.h(47,27):
+      see declaration of 'IFeature_Dx11::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\dlss\DLSSFeature_Dx11.h(6,7): warning C4250: 'DLSSFeatureDx11': inherits 'IFeature_Dx11::IFeature_Dx11::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/FeatureProvider_Dx11.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx11.h(48,10):
+      see declaration of 'IFeature_Dx11::ReadDetailedGpuTimes'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\dlssd\DLSSDFeature_Dx11.h(6,7): warning C4250: 'DLSSDFeatureDx11': inherits 'IFeature_Dx11::IFeature_Dx11::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/FeatureProvider_Dx11.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx11.h(47,27):
+      see declaration of 'IFeature_Dx11::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\dlssd\DLSSDFeature_Dx11.h(6,7): warning C4250: 'DLSSDFeatureDx11': inherits 'IFeature_Dx11::IFeature_Dx11::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/FeatureProvider_Dx11.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx11.h(48,10):
+      see declaration of 'IFeature_Dx11::ReadDetailedGpuTimes'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\fsr2\FSR2Feature_Dx11.h(10,7): warning C4250: 'FSR2FeatureDx11': inherits 'IFeature_Dx11::IFeature_Dx11::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/FeatureProvider_Dx11.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx11.h(47,27):
+      see declaration of 'IFeature_Dx11::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\fsr2\FSR2Feature_Dx11.h(10,7): warning C4250: 'FSR2FeatureDx11': inherits 'IFeature_Dx11::IFeature_Dx11::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/FeatureProvider_Dx11.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx11.h(48,10):
+      see declaration of 'IFeature_Dx11::ReadDetailedGpuTimes'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\fsr31\FSR31Feature_Dx11.h(10,7): warning C4250: 'FSR31FeatureDx11': inherits 'IFeature_Dx11::IFeature_Dx11::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/FeatureProvider_Dx11.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx11.h(47,27):
+      see declaration of 'IFeature_Dx11::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\fsr31\FSR31Feature_Dx11.h(10,7): warning C4250: 'FSR31FeatureDx11': inherits 'IFeature_Dx11::IFeature_Dx11::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/FeatureProvider_Dx11.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx11.h(48,10):
+      see declaration of 'IFeature_Dx11::ReadDetailedGpuTimes'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\dlss\DLSSFeature_Dx12.h(7,7): warning C4250: 'DLSSFeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/FeatureProvider_Dx12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(70,27):
+      see declaration of 'IFeature_Dx12::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\dlss\DLSSFeature_Dx12.h(7,7): warning C4250: 'DLSSFeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/FeatureProvider_Dx12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(71,10):
+      see declaration of 'IFeature_Dx12::ReadDetailedGpuTimes'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\dlssd\DLSSDFeature_Dx12.h(7,7): warning C4250: 'DLSSDFeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/FeatureProvider_Dx12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(70,27):
+      see declaration of 'IFeature_Dx12::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\dlssd\DLSSDFeature_Dx12.h(7,7): warning C4250: 'DLSSDFeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/FeatureProvider_Dx12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(71,10):
+      see declaration of 'IFeature_Dx12::ReadDetailedGpuTimes'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\fsr2\FSR2Feature_Dx12.h(8,7): warning C4250: 'FSR2FeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/FeatureProvider_Dx12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(70,27):
+      see declaration of 'IFeature_Dx12::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\fsr2\FSR2Feature_Dx12.h(8,7): warning C4250: 'FSR2FeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/FeatureProvider_Dx12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(71,10):
+      see declaration of 'IFeature_Dx12::ReadDetailedGpuTimes'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\fsr2_212\FSR2Feature_Dx12_212.h(8,7): warning C4250: 'FSR2FeatureDx12_212': inherits 'IFeature_Dx12::IFeature_Dx12::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/FeatureProvider_Dx12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(70,27):
+      see declaration of 'IFeature_Dx12::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\fsr2_212\FSR2Feature_Dx12_212.h(8,7): warning C4250: 'FSR2FeatureDx12_212': inherits 'IFeature_Dx12::IFeature_Dx12::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/FeatureProvider_Dx12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(71,10):
+      see declaration of 'IFeature_Dx12::ReadDetailedGpuTimes'
+  
+  FSR2Feature_Dx12_212.cpp
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\fsr2_212\FSR2Feature_Dx12_212.h(8,7): warning C4250: 'FSR2FeatureDx12_212': inherits 'IFeature_Dx12::IFeature_Dx12::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/fsr2_212/FSR2Feature_Dx11On12_212.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(70,27):
+      see declaration of 'IFeature_Dx12::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\fsr2_212\FSR2Feature_Dx12_212.h(8,7): warning C4250: 'FSR2FeatureDx12_212': inherits 'IFeature_Dx12::IFeature_Dx12::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/fsr2_212/FSR2Feature_Dx11On12_212.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(71,10):
+      see declaration of 'IFeature_Dx12::ReadDetailedGpuTimes'
+  
+  FSR2Feature_Vk_212.cpp
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\ffx\FFXFeature_Dx12.h(8,7): warning C4250: 'FFXFeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/FeatureProvider_Dx12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(70,27):
+      see declaration of 'IFeature_Dx12::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\ffx\FFXFeature_Dx12.h(8,7): warning C4250: 'FFXFeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/FeatureProvider_Dx12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(71,10):
+      see declaration of 'IFeature_Dx12::ReadDetailedGpuTimes'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\xess\XeSSFeature_Dx12.h(6,7): warning C4250: 'XeSSFeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/FeatureProvider_Dx12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(70,27):
+      see declaration of 'IFeature_Dx12::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\xess\XeSSFeature_Dx12.h(6,7): warning C4250: 'XeSSFeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/FeatureProvider_Dx12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(71,10):
+      see declaration of 'IFeature_Dx12::ReadDetailedGpuTimes'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\fsr2_212\FSR2Feature_Dx12_212.h(8,7): warning C4250: 'FSR2FeatureDx12_212': inherits 'IFeature_Dx12::IFeature_Dx12::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/fsr2_212/FSR2Feature_Dx12_212.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(70,27):
+      see declaration of 'IFeature_Dx12::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\fsr2_212\FSR2Feature_Dx12_212.h(8,7): warning C4250: 'FSR2FeatureDx12_212': inherits 'IFeature_Dx12::IFeature_Dx12::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/fsr2_212/FSR2Feature_Dx12_212.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(71,10):
+      see declaration of 'IFeature_Dx12::ReadDetailedGpuTimes'
+  
+  FFXFeature.cpp
+  FSR31Feature_Dx11.cpp
+  FFXFeature_Dx11On12.cpp
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\fsr31\FSR31Feature_Dx11.h(10,7): warning C4250: 'FSR31FeatureDx11': inherits 'IFeature_Dx11::IFeature_Dx11::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/fsr31/FSR31Feature_Dx11.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx11.h(47,27):
+      see declaration of 'IFeature_Dx11::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\fsr31\FSR31Feature_Dx11.h(10,7): warning C4250: 'FSR31FeatureDx11': inherits 'IFeature_Dx11::IFeature_Dx11::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/fsr31/FSR31Feature_Dx11.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx11.h(48,10):
+      see declaration of 'IFeature_Dx11::ReadDetailedGpuTimes'
+  
+  FFXFeature_Dx12.cpp
+  FFXFeature_Vk.cpp
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\ffx\FFXFeature_Dx12.h(8,7): warning C4250: 'FFXFeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/ffx/FFXFeature_Dx11On12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(70,27):
+      see declaration of 'IFeature_Dx12::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\ffx\FFXFeature_Dx12.h(8,7): warning C4250: 'FFXFeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/ffx/FFXFeature_Dx11On12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(71,10):
+      see declaration of 'IFeature_Dx12::ReadDetailedGpuTimes'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\ffx\FFXFeature_Dx12.h(8,7): warning C4250: 'FFXFeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/ffx/FFXFeature_Dx12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(70,27):
+      see declaration of 'IFeature_Dx12::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\ffx\FFXFeature_Dx12.h(8,7): warning C4250: 'FFXFeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/ffx/FFXFeature_Dx12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(71,10):
+      see declaration of 'IFeature_Dx12::ReadDetailedGpuTimes'
+  
+  IFeature_Dx11.cpp
+  IFeature_Dx11wDx12.cpp
+  Config.cpp
+  FSR2Feature.cpp
+  FSR2Feature_Dx11.cpp
+  FSR2Feature_Dx11On12.cpp
+  FSR2Feature_Dx12.cpp
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\fsr2\FSR2Feature_Dx11.h(10,7): warning C4250: 'FSR2FeatureDx11': inherits 'IFeature_Dx11::IFeature_Dx11::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/fsr2/FSR2Feature_Dx11.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx11.h(47,27):
+      see declaration of 'IFeature_Dx11::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\fsr2\FSR2Feature_Dx11.h(10,7): warning C4250: 'FSR2FeatureDx11': inherits 'IFeature_Dx11::IFeature_Dx11::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/fsr2/FSR2Feature_Dx11.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx11.h(48,10):
+      see declaration of 'IFeature_Dx11::ReadDetailedGpuTimes'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\fsr2\FSR2Feature_Dx12.h(8,7): warning C4250: 'FSR2FeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/fsr2/FSR2Feature_Dx11On12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(70,27):
+      see declaration of 'IFeature_Dx12::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\fsr2\FSR2Feature_Dx12.h(8,7): warning C4250: 'FSR2FeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/fsr2/FSR2Feature_Dx11On12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(71,10):
+      see declaration of 'IFeature_Dx12::ReadDetailedGpuTimes'
+  
+  FSR2Feature_Vk.cpp
+  IFeature.cpp
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\fsr2\FSR2Feature_Dx12.h(8,7): warning C4250: 'FSR2FeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/fsr2/FSR2Feature_Dx12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(70,27):
+      see declaration of 'IFeature_Dx12::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\fsr2\FSR2Feature_Dx12.h(8,7): warning C4250: 'FSR2FeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/fsr2/FSR2Feature_Dx12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(71,10):
+      see declaration of 'IFeature_Dx12::ReadDetailedGpuTimes'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature.cpp(281,57): warning C4018: '>': signed/unsigned mismatch [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/IFeature.cpp')
+  
+  IFeature_Dx12.cpp
+  FfxApi_Dx12.cpp
+  FSR2_Dx12.cpp
+  FSR3_Dx12.cpp
+  D3D11_Hooks.cpp
+  Vulkan_Hooks.cpp
+  menu_common.cpp
+  menu_dx_base.cpp
+  menu_dx11.cpp
+  menu_dx12.cpp
+  menu_overlay_base.cpp
+  menu_overlay_dx.cpp
+  menu_overlay_vk.cpp
+  wrapped_swapchain.cpp
+  Logger.cpp
+  NVNGX.cpp
+  NVNGX_DLSS_Dx11.cpp
+  DlssNr_Dx12.cpp
+  DlssNr_ExposureCalibrate.cpp
+  DlssNr_Vk.cpp
+  DlssNr_LutVk.cpp
+  DlssNrDetailReuse_Vk.cpp
+  DlssNrSpatial_Vk.cpp
+  DlssNrFeature_Vk.cpp
+  DlssNr_ExposureScan.cpp
+  DlssNr_ColourEncodingStatus.cpp
+  DlssNr_LutStatus.cpp
+  DlssNr_Proxy.cpp
+  DlssNr_Menu.cpp
+  DlssNrNative_Vk.cpp
+  NVNGX_DLSS_Dx12.cpp
+  dllmain.cpp
+  NVNGX_DLSS_Vk.cpp
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\dlss\DLSSFeature_Dx12.h(7,7): warning C4250: 'DLSSFeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/inputs/NVNGX_DLSS_Dx12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(70,27):
+      see declaration of 'IFeature_Dx12::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\dlss\DLSSFeature_Dx12.h(7,7): warning C4250: 'DLSSFeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/inputs/NVNGX_DLSS_Dx12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(71,10):
+      see declaration of 'IFeature_Dx12::ReadDetailedGpuTimes'
+  
+  XeSSFeature.cpp
+  XeSSFeature_Dx11.cpp
+  XeSSFeature_Dx11on12.cpp
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\xess\XeSSFeature_Dx12.h(6,7): warning C4250: 'XeSSFeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/xess/XeSSFeature_Dx11on12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(70,27):
+      see declaration of 'IFeature_Dx12::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\xess\XeSSFeature_Dx12.h(6,7): warning C4250: 'XeSSFeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/xess/XeSSFeature_Dx11on12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(71,10):
+      see declaration of 'IFeature_Dx12::ReadDetailedGpuTimes'
+  
+  XeSSFeature_Dx12.cpp
+  scanner.cpp
+  Bias_Dx11.cpp
+  Bias_Dx12.cpp
+  FT_Dx12.cpp
+  OS_Dx11.cpp
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\xess\XeSSFeature_Dx12.h(6,7): warning C4250: 'XeSSFeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadUpscalerTime' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/xess/XeSSFeature_Dx12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(70,27):
+      see declaration of 'IFeature_Dx12::ReadUpscalerTime'
+  
+D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\xess\XeSSFeature_Dx12.h(6,7): warning C4250: 'XeSSFeatureDx12': inherits 'IFeature_Dx12::IFeature_Dx12::ReadDetailedGpuTimes' via dominance [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  (compiling source file '/upscalers/xess/XeSSFeature_Dx12.cpp')
+      D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\upscalers\IFeature_Dx12.h(71,10):
+      see declaration of 'IFeature_Dx12::ReadDetailedGpuTimes'
+  
+  OS_Dx12.cpp
+  SGSR1_Dx12.cpp
+  SGSR1_Vk.cpp
+  RCAS_Dx11.cpp
+  RCAS_Dx12.cpp
+  XeSSFeature_Vk.cpp
+  Util.cpp
+  version_check.cpp
+  XeSS_Debug.cpp
+  XeSS_Dx12.cpp
+  imgui_impl_dx11.cpp
+  imgui_impl_dx12.cpp
+  imgui_impl_uwp.cpp
+  imgui_impl_vulkan.cpp
+  imgui_impl_win32.cpp
+  parameters.cpp
+  TrustMask_Dx12.cpp
+  OpticalFlow_Dx12.cpp
+  SceneCut_Dx12.cpp
+  DepthFinderCore.cpp
+  NativeProducer.cpp
+  DepthCopyDx11.cpp
+  DepthResolveDx12.cpp
+  MsaaPictureDx11.cpp
+  SharedFrame.cpp
+  SharedFrameVk.cpp
+  VkPresentBridgeCore.cpp
+  imgui.cpp
+  imgui_draw.cpp
+  imgui_tables.cpp
+  imgui_widgets.cpp
+  imgui_freetype.cpp
+  DlssNrNative.cpp
+     Creating library D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\x64\Release\OptiScaler.lib and object D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\x64\Release\OptiScaler.exp
+LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library [D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\OptiScaler\OptiScaler.vcxproj]
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 52357 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  OptiScaler.vcxproj -> D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\x64\Release\OptiScaler.dll
+  A subdirectory or file D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\x64\Release\a\ already exists.
+          1 file(s) moved.
+          1 file(s) copied.
+  The system cannot find the file specified.
+          1 file(s) copied.
+          1 file(s) copied.
+          1 file(s) copied.
+          1 file(s) copied.
+          1 file(s) copied.
+          1 file(s) copied.
+  D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\external\xess\bin\libxell.dll
+  D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\external\xess\bin\libxess.dll
+  D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\external\xess\bin\libxess_dx11.dll
+  D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\external\xess\bin\libxess_fg.dll
+          4 file(s) copied.
+  The system cannot find the path specified.
+          0 file(s) copied.
+          1 file(s) copied.
+          1 file(s) copied.
+          1 file(s) copied.
+          1 file(s) copied.
+          1 file(s) copied.
+  D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\LUTs\AgX-Blender-plus1EV.cube
+  D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\LUTs\AgX-Blender-Punchy.cube
+  D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\LUTs\AgX-Blender.cube
+  D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\LUTs\AgX-Kraken-800T.cube
+  D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\LUTs\AgX-Kraken-Punchy.cube
+  D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\LUTs\AgX-Kraken.cube
+  D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\LUTs\AgX-Resolve-Bombastic.cube
+  D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\LUTs\AgX-Resolve-Default.cube
+  D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\LUTs\identity_33.cube
+  D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\LUTs\JP2499DRT-ClassicCinemaNegative.cube
+  D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\LUTs\JP2499DRT-ClassicNegative.cube
+  D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\LUTs\JP2499DRT-ClassicReversal.cube
+  D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\LUTs\JP2499DRT-CrazyInstantFilm.cube
+  D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\LUTs\JP2499DRT-CrazyNegative.cube
+  D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\LUTs\JP2499DRT-PrintV1.cube
+  D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\LUTs\JP2499DRT-PrintV2.cube
+  D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\LUTs\JP2499DRT-PrintV3.cube
+  D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\LUTs\JP2499DRT.cube
+  D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\LUTs\README.txt
+  D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\LUTs\shift_33.cube
+         20 file(s) copied.
+          1 file(s) copied.
+          1 file(s) copied.
+          1 file(s) copied.
+  D:\a\shadPS4-Bloodborne-DLSS-NR\shadPS4-Bloodborne-DLSS-NR\f5\external\directx_agility_sdk\lib\D3D12Core.dll
+          1 file(s) copied.
+          1 file(s) copied.
+          1 file(s) copied.
